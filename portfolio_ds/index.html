@@ -11,6 +11,12 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+		<script type="text/javascript">
+  (function() {
+    emailjs.init("H-yPKZR-FXHhE96fK");
+  })();
+</script>
 	</head>
 	<body class="is-preload">
 
@@ -203,7 +209,7 @@
 								</div>
 								<div class="inner columns divided">
 									<div class="span-3-25">
-										<form method="post" action="#">
+										<form id="contact-form" onsubmit="return sendEmail(event)">
 											<div class="fields">
 												<div class="field half">
 													<label for="name">Nome</label>
@@ -219,7 +225,7 @@
 												</div>
 											</div>
 											<ul class="actions">
-												<li><input type="submit" value="Send Message" class="button primary" /></li>
+												<li><input type="submit" value="Enviar" class="button primary" /></li>
 											</ul>
 										</form>
 									</div>
@@ -244,6 +250,20 @@
 			<script src="assets/js/browser.min.js"></script>
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/main.js"></script>
+
+		<script type="text/javascript">
+  window.sendEmail = function(event) {
+    event.preventDefault();
+    emailjs.sendForm('service_na1fzjo', 'template_706q96k', '#contact-form')
+      .then(function() {
+        alert('Email enviado!');
+        document.getElementById('contact-form').reset();
+      }, function(error) {
+        alert('Erro: ' + JSON.stringify(error));
+      });
+    return false;
+  };
+</script>
 
 	</body>
 </html>
