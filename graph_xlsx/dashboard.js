@@ -12,6 +12,22 @@
       '#641a96', '#00bcd4', '#ff9800', '#8bc34a'
   ];
   
+  // Mapeamento dos meses para ordenação cronológica (01 = Jan, 02 = Fev, etc.)
+  const MONTH_ORDER = {
+      'JANEIRO': '01',
+      'FEVEREIRO': '02',
+      'MARÇO': '03',
+      'ABRIL': '04',
+      'MAIO': '05',
+      'JUNHO': '06',
+      'JULHO': '07',
+      'AGOSTO': '08',
+      'SETEMBRO': '09',
+      'OUTUBRO': '10',
+      'NOVEMBRO': '11',
+      'DEZEMBRO': '12'
+  };
+  
   // ---------------------------------------------
   // 1. VARIÁVEIS E EVENTOS DO DOM
   // ---------------------------------------------
@@ -35,7 +51,7 @@
 
     statusElement.textContent = `Carregando: ${file.name}...`;
     errorElement.textContent = '';
-    if (tableBody) tableBody.innerHTML = '<tr><td colspan="4">Processando...</td></tr>';
+    if (tableBody) tableBody.innerHTML = '<tr><td colspan="3">Processando...</td></tr>';
     
     if (myChartInstance) myChartInstance.destroy();
 
@@ -72,8 +88,9 @@
             // 3. GERAR O GRÁFICO
             drawStackedBarChart(chartData);
             
-            // 4. ATUALIZAR A TABELA
-            updateTable(combinedData.slice(0, 15));
+            // 4. ATUALIZAR A TABELA CONSOLIDADA
+            const tableData = aggregateDataForTable(combinedData);
+            updateTable(tableData);
 
             statusElement.textContent = `Sucesso! Carregadas ${totalSheets} meses/categorias (abas) do arquivo "${file.name}".`;
 
@@ -89,54 +106,60 @@
   }
   
   // ---------------------------------------------
-  // FUNÇÃO CORRIGIDA: Lida com Múltiplas Linhas de Cabeçalho
+  // FUNÇÃO UTILITÁRIA PARA ORDENAÇÃO DE MESES
+  // ---------------------------------------------
+  function getSortableMonthKey(monthYearString) {
+      const parts = monthYearString.toUpperCase().split(/[\s-]+/).filter(p => p);
+      if (parts.length >= 2) {
+          const monthName = parts[0];
+          const year = parts[parts.length - 1];
+          const monthCode = MONTH_ORDER[monthName] || '99'; // '99' para meses não mapeados (e novos)
+
+          if (year && year.length === 4) {
+              return `${year}-${monthCode}`;
+          }
+      }
+      return `0000-${monthYearString}`; // Fallback para meses não reconhecidos
+  }
+
+  // ---------------------------------------------
+  // FUNÇÃO DE LEITURA DA ABA (Corrigida para Linhas de Cabeçalho Múltiplas)
   // ---------------------------------------------
   function processSheetData(worksheet, monthYear) {
-      // Lê o conteúdo da planilha como uma matriz (Array of Arrays) a partir da linha 1 (índice 0)
       const dataAsArray = XLSX.utils.sheet_to_json(worksheet, { 
           header: 1, 
-          range: 0, // Começa a ler da primeira linha
+          range: 0, 
           raw: false, 
-          dateNF: 'YYYY-MM-DD' // Assume que datas são lidas neste formato, ou como serial number
+          dateNF: 'YYYY-MM-DD' 
       });
       
-      // Validação mínima da estrutura
-      if (dataAsArray.length < 3) {
-          console.warn(`Aba ${monthYear} ignorada: Planilha não possui as linhas necessárias (Mínimo de 3).`);
-          return { data: [] };
-      }
+      if (dataAsArray.length < 3) return { data: [] };
       
-      // LINHAS CHAVE:
-      const subCategoryNames = dataAsArray[1]; // Linha 2 (Índice 1): DESKTOP, NOTEBOOK...
-      const dataStartRowIndex = 2; // Linha 3 (Índice 2): Primeira linha de dados (Semana 1)
-      
-      // ÍNDICES CHAVE:
-      const periodColIndex = 0; // Coluna 1 (Índice 0): Nº SEMANA / Período
-      const firstSalesColIndex = 1; // Coluna 2 (Índice 1): Onde a primeira venda por subcategoria começa (DESKTOP)
+      const subCategoryNames = dataAsArray[1]; // Linha 2 (Subcategorias)
+      const dataStartRowIndex = 2; // Linha 3 (Dados)
+      const periodColIndex = 0; // Coluna 1 (Nº SEMANA)
+      const firstSalesColIndex = 1; // Coluna 2 (Início das Vendas)
 
       const mappedData = [];
-
+      
       // Itera a partir da primeira linha de dados (Índice 2)
       for (let i = dataStartRowIndex; i < dataAsArray.length; i++) {
           const row = dataAsArray[i];
           
-          if (!row || !row[periodColIndex]) continue; // Ignora linhas vazias ou sem período
+          if (!row || !row[periodColIndex]) continue;
           
-          const weeklyPeriod = row[periodColIndex]; // Nº SEMANA (Ex: 1, 2, 3...)
+          const weeklyPeriod = row[periodColIndex]; 
           
-          // Itera sobre as colunas de subcategorias/vendas, começando pela primeira coluna de vendas (Índice 1)
           for (let j = firstSalesColIndex; j < row.length; j++) {
               const salesValue = parseFloat(row[j]);
-              // Pega o nome da subcategoria da Linha 2 (índice 1), mesma coluna j
-              const subcategory = subCategoryNames[j]; 
+              const subcategory = subCategoryNames[j];
 
-              // Filtra colunas sem nome de subcategoria (as colunas 'nan' no anexo) e vendas inválidas
               if (subcategory && typeof subcategory === 'string' && !subcategory.includes('nan') && !isNaN(salesValue) && salesValue > 0) {
                   mappedData.push({
                       MêsAno: monthYear,
                       Subcategoria: subcategory.trim(),
                       Vendas: salesValue,
-                      FechamentoSemanal: weeklyPeriod // Mantém o número da semana ou data
+                      FechamentoSemanal: weeklyPeriod 
                   });
               }
           }
@@ -154,9 +177,7 @@
       const allSubcategoriesSet = new Set();
 
       data.forEach(row => {
-          // A BARRA (Eixo X) é o Mês/Ano
           const monthKey = row.MêsAno; 
-          // A FRAÇÃO (Stack) é a Subcategoria
           const subcategory = row.Subcategoria;
           const sales = row.Vendas;
 
@@ -164,15 +185,19 @@
               allMonthsSet.add(monthKey);
               allSubcategoriesSet.add(subcategory);
               
-              // Chave única para agregação: Subcategoria|Mês
-              // Isso soma todas as vendas semanais para a Subcategoria naquele Mês/Ano
               const key = `${subcategory}|${monthKey}`;
-              salesByMonthAndSubcategory[key] = (salesByMonthAndSubcategory[key] || 0) + sales;
+              // Acumula todas as vendas semanais para o total mensal da subcategoria
+              salesByMonthAndSubcategory[key] = (salesByMonthAndSubcategory[key] || 0) + sales; 
           }
       });
       
-      // Ordena os meses cronologicamente para o Eixo X
-      const sortedMonths = Array.from(allMonthsSet).sort();
+      // ORDENAÇÃO CRONOLÓGICA (NOVO REQUISITO)
+      const sortedMonths = Array.from(allMonthsSet).sort((a, b) => {
+          const keyA = getSortableMonthKey(a);
+          const keyB = getSortableMonthKey(b);
+          return keyA.localeCompare(keyB);
+      });
+      
       const sortedSubcategories = Array.from(allSubcategoriesSet).sort();
       
       // Cria datasets para cada subcategoria
@@ -199,20 +224,6 @@
           subcategories: sortedSubcategories
       };
   }
-
-  // ---------------------------------------------
-  // FUNÇÃO UTILITÁRIA PARA DATAS
-  // ---------------------------------------------
-  function excelDateToYYYYMMDD(excelSerialNumber) {
-      const date = new Date(Date.UTC(0, 0, excelSerialNumber - 1));
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      
-      if (year < 2000) return 'Data Inválida'; 
-      return `${year}-${month}-${day}`;
-  }
-
 
   // ---------------------------------------------
   // 3. FUNÇÃO PARA DESENHAR O GRÁFICO (Barras Empilhadas)
@@ -255,37 +266,54 @@
   }
 
   // ---------------------------------------------
-  // 4. FUNÇÃO PARA ATUALIZAR A TABELA DE DADOS
+  // 4. FUNÇÃO PARA PREPARAR DADOS PARA A TABELA (NOVO REQUISITO)
+  // ---------------------------------------------
+  function aggregateDataForTable(combinedData) {
+      const monthlyTotalMap = {};
+
+      combinedData.forEach(row => {
+          const monthKey = row.MêsAno;
+          const sales = row.Vendas;
+
+          if (monthKey && !isNaN(sales)) {
+              monthlyTotalMap[monthKey] = (monthlyTotalMap[monthKey] || 0) + sales;
+          }
+      });
+
+      // Converte para o formato de array para a tabela e ordena cronologicamente
+      return Object.keys(monthlyTotalMap).sort((a, b) => {
+          const keyA = getSortableMonthKey(a);
+          const keyB = getSortableMonthKey(b);
+          return keyA.localeCompare(keyB);
+      }).map(month => ({
+          MêsAno: month,
+          Vendas: monthlyTotalMap[month].toFixed(2) // Formata com 2 casas decimais
+      }));
+  }
+
+  // ---------------------------------------------
+  // 5. FUNÇÃO PARA ATUALIZAR A TABELA DE DADOS
   // ---------------------------------------------
   function updateTable(data) {
     if (!tableBody || !table) return;
     
     let html = '';
-    const limit = Math.min(data.length, 15);
-
-    // Recria o cabeçalho da tabela 
-    table.innerHTML = '<thead><tr><th scope="col">#</th><th scope="col">Mês/Ano</th><th scope="col">Subcategoria</th><th scope="col">Vendas</th><th scope="col">Fechamento Semanal</th></tr></thead><tbody>';
     
-    for (let i = 0; i < limit; i++) {
-        const row = data[i];
-        const monthYear = row.MêsAno || '';
-        const subcategory = row.Subcategoria || '';
-        const sales = row.Vendas !== undefined ? String(row.Vendas) : ''; 
-        const weeklyPeriod = row.FechamentoSemanal || '';
-
+    // Altera o cabeçalho para refletir a agregação (Apenas Mês/Ano e Total)
+    table.innerHTML = '<thead><tr><th scope="col">#</th><th scope="col">Mês/Ano</th><th scope="col">Vendas Totais</th></tr></thead><tbody>';
+    
+    data.forEach((row, index) => {
         html += `
             <tr>
-                <td>${i + 1}</td>
-                <td>${monthYear}</td>
-                <td>${subcategory}</td>
-                <td>${sales}</td>
-                <td>${weeklyPeriod}</td>
+                <td>${index + 1}</td>
+                <td>${row.MêsAno}</td>
+                <td>R$ ${row.Vendas}</td>
             </tr>
         `;
-    }
+    });
 
-    if (data.length > 15) {
-         html += `<tr><td colspan="5">Mostrando apenas as primeiras 15 linhas de ${data.length} registros no total.</td></tr>`;
+    if (data.length === 0) {
+        html += `<tr><td colspan="3">Nenhum dado mensal consolidado encontrado.</td></tr>`;
     }
 
     table.querySelector('tbody').innerHTML = html;
