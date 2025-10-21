@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard Excel Dinâmico · GitHub Pages</title>
+    <title>Dashboard Excel Simples · GitHub Pages</title>
 
     <link href="bootstrap.min.css" rel="stylesheet"> 
     <link href="dashboard.css" rel="stylesheet">
@@ -13,11 +13,12 @@
     <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" crossorigin="anonymous"></script>
     
     <style>
-      /* CORREÇÃO CSS 2: Adicionando padding superior ao conteúdo principal (main) 
-         para evitar que o conteúdo fique atrás do menu fixo. */
-      main {
-        padding-top: 2rem; /* Garante espaço para a barra superior fixa */
+      /* Altura do Canvas ajustada pelo CSS dinâmico */
+      #myChart {
+        height: 700px !important; /* Altura do gráfico no limite da tela */
+        max-height: 80vh; /* Limite a 80% da altura da viewport para dispositivos menores */
       }
+      
       .upload-area {
         padding: 10px 20px;
         border: 2px dashed #007bff;
@@ -49,20 +50,7 @@
 
 <div class="container-fluid">
   <div class="row">
-    <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-      <div class="position-sticky pt-3">
-        <ul class="nav flex-column">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">
-              <span data-feather="home"></span>
-              Dashboard Principal
-            </a>
-          </li>
-          </ul>
-      </div>
-    </nav>
-
-    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <main class="col-12 px-md-4"> 
       
       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 class="h2">Visualização de Dados</h1>
@@ -77,7 +65,7 @@
         </div>
       </div>
 
-      <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+      <canvas class="my-4 w-100" id="myChart" width="1000"></canvas> 
       <div id="error-message" class="error-message"></div>
 
       <h2>Amostra dos Dados do Excel</h2>
