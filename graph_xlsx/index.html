@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard Excel Evolução por Categoria (Gráfico Único)</title>
+    <title>Dashboard Excel Multi-Aba (Gráfico Único)</title>
 
     <link href="bootstrap.min.css" rel="stylesheet"> 
     <link href="dashboard.css" rel="stylesheet">
@@ -13,10 +13,10 @@
     <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" crossorigin="anonymous"></script>
     
     <style>
-      /* Altura do Canvas ajustada (aproximadamente 700px) */
-      #myChart {
-        height: 700px !important; /* Altura do gráfico no limite da tela */
-        max-height: 80vh; /* Limite a 80% da altura da viewport */
+      /* Altura do Gráfico */
+      .chart-canvas {
+        min-height: 650px; 
+        max-height: 80vh; 
       }
       
       main {
@@ -24,7 +24,7 @@
       }
       .upload-area {
         padding: 10px 20px;
-        border: 2px dashed #007bff;
+        border: 2px dashed #0d6efd;
         border-radius: 5px;
         text-align: center;
         margin-bottom: 30px;
@@ -43,7 +43,7 @@
   <body>
     
 <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-  <a class="navbar-brand col-12 me-0 px-3" href="#">Dashboard Excel Evolução Agrupada</a>
+  <a class="navbar-brand col-12 me-0 px-3" href="#">Dashboard Excel Multi-Aba</a>
 </header>
 
 <div class="container-fluid">
@@ -52,14 +52,14 @@
     <main class="col-12 px-md-4"> 
       
       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Vendas por Mês e Categoria</h1>
+        <h1 class="h2">Evolução Semanal Consolidada</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
           <div class="upload-area">
             <label for="excel-upload" class="btn btn-sm btn-primary">
               <span data-feather="upload"></span>
-              Fazer Upload de arquivo XLSX (C/ Colunas: Categoria, Mês, Vendas)
+              Fazer Upload do arquivo XLSX Mês/Ano (Com abas de Categoria)
             </label>
-            <input type="file" id="excel-upload" accept=".xlsx" style="display:none;" />
+            <input type="file" id="excel-upload" accept=".xlsx,.xls" style="display:none;" />
             <div class="mt-2" id="upload-status">Aguardando Upload...</div>
           </div>
         </div>
@@ -67,17 +67,18 @@
       
       <div id="error-message" class="error-message"></div>
 
-      <canvas class="my-4 w-100" id="myChart" width="1000"></canvas> 
+      <div id="chart-area" class="my-4 w-100 chart-canvas">
+          <h3 class="text-center text-muted pt-5">Faça o upload do arquivo para visualizar o dashboard.</h3>
+      </div>
       
-
       <h2 class="mt-5">Amostra dos Dados Brutos</h2>
       <div class="table-responsive">
         <table class="table table-striped table-sm" id="data-table">
           <thead>
-            <tr><th>#</th><th>Categoria</th><th>Vendas</th><th>Mês</th></tr>
+            <tr><th>#</th><th>Categoria</th><th>Vendas</th><th>Período Semanal</th></tr>
           </thead>
           <tbody>
-            <tr><td colspan="4">Faça o upload do arquivo Excel para visualizar os dados.</td></tr>
+            <tr><td colspan="4">Dados aparecerão aqui.</td></tr>
           </tbody>
         </table>
       </div>
