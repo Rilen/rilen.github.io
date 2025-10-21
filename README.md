@@ -3,8 +3,8 @@
 #### I'm Data Scientist and Phd Sudent. 🔬💻
 #### Fun fact: I'm a data enthusiast 🎲 and music lover 🤘
 
-![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=christianods&show_icons=true&theme=holi)
-![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=christianods&layout=compact&theme=holi)
+![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=rilen&show_icons=true&theme=holi)
+![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=rilen&layout=compact&theme=holi)
 
 # Some tools that I'm working with 🔨
 
