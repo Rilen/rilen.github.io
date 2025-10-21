@@ -57,7 +57,6 @@
         const worksheet = workbook.Sheets[firstSheetName];
         
         // CORREÇÃO CRÍTICA: Forçar a leitura para JSON com a opção 'raw: false'
-        // para garantir que números e datas sejam lidos corretamente.
         const jsonDados = XLSX.utils.sheet_to_json(worksheet, { 
             raw: false, 
             dateNF: 'YYYY-MM' // Tenta formatar datas (útil para o campo Mês)
@@ -71,17 +70,15 @@
         const actualHeaders = Object.keys(jsonDados[0] || {});
         
         // Mapeia os cabeçalhos para remover espaços em branco e capitalização inconsistente.
-        // O código de processamento usará estes nomes padronizados:
         const mappedData = jsonDados.map(row => {
             const newRow = {};
             for (const key in row) {
-                // Padroniza a chave para minúsculas e sem espaços, para evitar erros de case/espaços
+                // Padroniza a chave para minúsculas e sem espaços
                 const standardizedKey = key.trim().toLowerCase(); 
                 
                 if (standardizedKey.includes('categoria')) {
                     newRow.Categoria = row[key];
                 } else if (standardizedKey.includes('vendas')) {
-                    // Tenta converter para número imediatamente.
                     newRow.Vendas = parseFloat(row[key]);
                 } else if (standardizedKey.includes('mês') || standardizedKey.includes('mes')) {
                     newRow.Mês = row[key];
@@ -120,7 +117,7 @@
   }
 
   // ---------------------------------------------
-  // 2. FUNÇÃO DE AGRUPAMENTO DE DADOS PARA GRÁFICO AGRUPADO
+  // 2. FUNÇÃO DE AGRUPAMENTO DE DADOS PARA GRÁFICO EMPILHADO
   // ---------------------------------------------
   function processDataForGroupedBarChart(data) {
       const salesByMonthAndCategory = {};
@@ -178,20 +175,17 @@
   // FUNÇÃO UTILITÁRIA PARA DATAS (Caso o Excel use números de série)
   // ---------------------------------------------
   function excelDateToYYYYMM(excelSerialNumber) {
-      // O SheetJS tem uma função nativa para isso, mas podemos usar uma simplificada
-      // Se a data for lida como número, é um número de série do Excel (dias desde 1900-01-01)
       const date = new Date(Date.UTC(0, 0, excelSerialNumber - 1));
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
       
-      // Validação básica para evitar datas muito antigas se o número for inválido
       if (year < 2000) return 'Data Inválida'; 
       return `${year}-${month}`;
   }
 
 
   // ---------------------------------------------
-  // 3. FUNÇÃO PARA DESENHAR O GRÁFICO (Gráfico de Barras Agrupadas)
+  // 3. FUNÇÃO PARA DESENHAR O GRÁFICO (Gráfico de Barras EMPILHADAS)
   // ---------------------------------------------
   function drawGroupedBarChart({ labels, datasets }) {
     if (!chartCanvas) {
@@ -216,11 +210,11 @@
         maintainAspectRatio: false,
         scales: {
           xAxes: [{
-            stacked: false, 
+            stacked: true, // HABILITA EMPILHAMENTO PARA EIXO X (Mês)
             scaleLabel: { display: true, labelString: 'Período (Mês/Ano)' }
           }],
           yAxes: [{
-            stacked: false, 
+            stacked: true, // HABILITA EMPILHAMENTO PARA EIXO Y (Vendas)
             ticks: { beginAtZero: true },
             scaleLabel: { display: true, labelString: 'Total de Vendas' }
           }]
@@ -228,7 +222,7 @@
         legend: { display: true, position: 'bottom' },
         title: {
           display: true,
-          text: 'Evolução Mensal de Vendas por Categoria'
+          text: 'Evolução Mensal de Vendas por Categoria (Barras Empilhadas)'
         }
       }
     });
@@ -249,7 +243,6 @@
     for (let i = 0; i < limit; i++) {
         const row = data[i];
         const category = row.Categoria || '';
-        // Garante que o valor é exibido como string (evita notação científica para números grandes)
         const sales = row.Vendas !== undefined ? String(row.Vendas) : ''; 
         const month = row.Mês || '';
 
