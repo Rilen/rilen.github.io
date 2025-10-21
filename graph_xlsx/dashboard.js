@@ -3,7 +3,7 @@
 (function () {
   'use strict'
 
-  feather.replace({ 'aria-hidden': 'true' })
+  feather.replace({ 'aria-hidden': true })
   
   let myChartInstance = null;
   const colorPalette = [
@@ -24,10 +24,7 @@
 
   if (uploadInput) {
       uploadInput.addEventListener('change', handleFile, false);
-  } else {
-      console.error("Elemento de upload 'excel-upload' não encontrado.");
   }
-
 
   function handleFile(e) {
     const files = e.target.files;
@@ -57,17 +54,16 @@
             // Itera sobre TODAS AS ABAS
             workbook.SheetNames.forEach(sheetName => {
                 const worksheet = workbook.Sheets[sheetName];
-                // Passa o NOME DA ABA como o MÊS/ANO para processamento
                 const sheetData = processSheetData(worksheet, sheetName.trim());
                 
-                if (sheetData.length > 0) {
-                    combinedData.push(...sheetData);
+                if (sheetData.data.length > 0) {
+                    combinedData.push(...sheetData.data);
                     totalSheets++;
                 }
             });
             
             if (combinedData.length === 0) {
-                 throw new Error(`Nenhum dado válido encontrado nas ${totalSheets} abas processadas. Verifique se as colunas estão corretas.`);
+                 throw new Error(`Nenhum dado válido encontrado nas ${totalSheets} abas processadas. Verifique se as linhas 2 e 3 estão corretas.`);
             }
             
             // 2. AGRUPAR E PREPARAR DADOS PARA O GRÁFICO
@@ -79,7 +75,7 @@
             // 4. ATUALIZAR A TABELA
             updateTable(combinedData.slice(0, 15));
 
-            statusElement.textContent = `Sucesso! Carregadas ${totalSheets} abas (meses/categorias) do arquivo "${file.name}".`;
+            statusElement.textContent = `Sucesso! Carregadas ${totalSheets} meses/categorias (abas) do arquivo "${file.name}".`;
 
         } catch (error) {
             errorElement.textContent = `ERRO FATAL: ${error.message}`;
@@ -93,7 +89,7 @@
   }
   
   // ---------------------------------------------
-  // FUNÇÃO CORRIGIDA: Lida com Multi-Linha de Cabeçalho
+  // FUNÇÃO CORRIGIDA: Lida com Múltiplas Linhas de Cabeçalho
   // ---------------------------------------------
   function processSheetData(worksheet, monthYear) {
       // Lê o conteúdo da planilha como uma matriz (Array of Arrays) a partir da linha 1 (índice 0)
@@ -101,79 +97,52 @@
           header: 1, 
           range: 0, // Começa a ler da primeira linha
           raw: false, 
-          dateNF: 'YYYY-MM-DD' 
+          dateNF: 'YYYY-MM-DD' // Assume que datas são lidas neste formato, ou como serial number
       });
       
-      if (dataAsArray.length < 4 || !dataAsArray[1] || !dataAsArray[3]) {
-          console.warn(`Aba ${monthYear} ignorada: Estrutura da planilha muito curta.`);
-          return [];
+      // Validação mínima da estrutura
+      if (dataAsArray.length < 3) {
+          console.warn(`Aba ${monthYear} ignorada: Planilha não possui as linhas necessárias (Mínimo de 3).`);
+          return { data: [] };
       }
       
-      // Linhas importantes, baseadas no seu anexo:
-      // Linha 2 (índice 1): Contém os nomes das Subcategorias (COMPUTADORES, PERIFÉRICOS, etc.)
-      const subCategoryNames = dataAsArray[1];
+      // LINHAS CHAVE:
+      const subCategoryNames = dataAsArray[1]; // Linha 2 (Índice 1): DESKTOP, NOTEBOOK...
+      const dataStartRowIndex = 2; // Linha 3 (Índice 2): Primeira linha de dados (Semana 1)
       
-      // Linha 4 (índice 3): Contém os títulos das colunas de dados (Semana, Vendas, etc.)
-      const headers = dataAsArray[3];
-      
-      // O SheetJS pode ler células mescladas como `undefined` ou nulas.
-      // Precisamos identificar o índice da coluna de data (Período Semanal) e o índice da primeira coluna de venda.
-      
-      let dateColIndex = -1; 
-      let firstSalesColIndex = -1;
-      
-      // Encontra a coluna de data (Período Semanal) e a primeira coluna de vendas
-      headers.forEach((header, index) => {
-          if (typeof header === 'string') {
-              const standardizedHeader = header.trim().toLowerCase();
-              if (standardizedHeader.includes('semanal') || standardizedHeader.includes('fechamento')) {
-                  dateColIndex = index;
-              }
-              // Supondo que a primeira coluna que não é de data é a primeira coluna de venda
-              if (firstSalesColIndex === -1 && dateColIndex !== index) {
-                   // Se a coluna não for data, assumimos que é uma coluna de venda (Valor Total)
-                   firstSalesColIndex = index;
-              }
-          }
-      });
+      // ÍNDICES CHAVE:
+      const periodColIndex = 0; // Coluna 1 (Índice 0): Nº SEMANA / Período
+      const firstSalesColIndex = 1; // Coluna 2 (Índice 1): Onde a primeira venda por subcategoria começa (DESKTOP)
 
-      if (dateColIndex === -1 || firstSalesColIndex === -1) {
-          throw new Error(`Aba ${monthYear}: Não foi possível identificar as colunas de "Fechamento Semanal" e "Vendas/Valor".`);
-      }
-      
       const mappedData = [];
-      
-      // Itera a partir da linha 5 (índice 4) em diante - onde os dados semanais começam
-      for (let i = 4; i < dataAsArray.length; i++) {
+
+      // Itera a partir da primeira linha de dados (Índice 2)
+      for (let i = dataStartRowIndex; i < dataAsArray.length; i++) {
           const row = dataAsArray[i];
           
-          if (!row || !row[dateColIndex]) continue; // Ignora linhas vazias ou sem data
+          if (!row || !row[periodColIndex]) continue; // Ignora linhas vazias ou sem período
           
-          let weeklyDate = row[dateColIndex];
+          const weeklyPeriod = row[periodColIndex]; // Nº SEMANA (Ex: 1, 2, 3...)
           
-          // Tenta padronizar a data (se for número de série)
-          if (typeof weeklyDate === 'number' && weeklyDate > 1) { 
-              weeklyDate = excelDateToYYYYMMDD(weeklyDate);
-          }
-          
-          // Itera sobre as colunas de subcategorias/vendas
+          // Itera sobre as colunas de subcategorias/vendas, começando pela primeira coluna de vendas (Índice 1)
           for (let j = firstSalesColIndex; j < row.length; j++) {
               const salesValue = parseFloat(row[j]);
-              const subcategory = subCategoryNames[j]; // O nome da subcategoria está na linha 2, mesma coluna j
+              // Pega o nome da subcategoria da Linha 2 (índice 1), mesma coluna j
+              const subcategory = subCategoryNames[j]; 
 
-              // Verifica se o nome da subcategoria é válido (e não é vazio/coluna de formatação)
-              if (subcategory && typeof subcategory === 'string' && !isNaN(salesValue) && salesValue > 0) {
+              // Filtra colunas sem nome de subcategoria (as colunas 'nan' no anexo) e vendas inválidas
+              if (subcategory && typeof subcategory === 'string' && !subcategory.includes('nan') && !isNaN(salesValue) && salesValue > 0) {
                   mappedData.push({
                       MêsAno: monthYear,
                       Subcategoria: subcategory.trim(),
                       Vendas: salesValue,
-                      FechamentoSemanal: weeklyDate
+                      FechamentoSemanal: weeklyPeriod // Mantém o número da semana ou data
                   });
               }
           }
       }
       
-      return mappedData;
+      return { data: mappedData };
   }
 
   // ---------------------------------------------
@@ -185,8 +154,9 @@
       const allSubcategoriesSet = new Set();
 
       data.forEach(row => {
-          // O Eixo X será o Mês/Ano (Nome da Aba)
+          // A BARRA (Eixo X) é o Mês/Ano
           const monthKey = row.MêsAno; 
+          // A FRAÇÃO (Stack) é a Subcategoria
           const subcategory = row.Subcategoria;
           const sales = row.Vendas;
 
@@ -195,12 +165,13 @@
               allSubcategoriesSet.add(subcategory);
               
               // Chave única para agregação: Subcategoria|Mês
+              // Isso soma todas as vendas semanais para a Subcategoria naquele Mês/Ano
               const key = `${subcategory}|${monthKey}`;
               salesByMonthAndSubcategory[key] = (salesByMonthAndSubcategory[key] || 0) + sales;
           }
       });
       
-      // Ordena as labels do Eixo X
+      // Ordena os meses cronologicamente para o Eixo X
       const sortedMonths = Array.from(allMonthsSet).sort();
       const sortedSubcategories = Array.from(allSubcategoriesSet).sort();
       
@@ -208,7 +179,7 @@
       const datasets = sortedSubcategories.map((subcategory, index) => {
           const salesData = sortedMonths.map(month => {
               const key = `${subcategory}|${month}`;
-              return salesByMonthAndSubcategory[key] || 0; // 0 se não houver venda
+              return salesByMonthAndSubcategory[key] || 0; 
           });
           
           const color = colorPalette[index % colorPalette.length];
@@ -257,7 +228,7 @@
     myChartInstance = new Chart(ctx, {
       type: 'bar', 
       data: {
-        labels: labels, // Mês/Ano (Nome da Aba)
+        labels: labels, // Mês/Ano (Ex: "JANEIRO - 2025")
         datasets: datasets 
       },
       options: {
@@ -266,7 +237,7 @@
         scales: {
           xAxes: [{
             stacked: true, // HABILITA EMPILHAMENTO
-            scaleLabel: { display: true, labelString: 'Período (Mês/Ano)' }
+            scaleLabel: { display: true, labelString: 'Mês / Período' }
           }],
           yAxes: [{
             stacked: true, // HABILITA EMPILHAMENTO
@@ -292,7 +263,7 @@
     let html = '';
     const limit = Math.min(data.length, 15);
 
-    // Recria o cabeçalho da tabela com as novas colunas
+    // Recria o cabeçalho da tabela 
     table.innerHTML = '<thead><tr><th scope="col">#</th><th scope="col">Mês/Ano</th><th scope="col">Subcategoria</th><th scope="col">Vendas</th><th scope="col">Fechamento Semanal</th></tr></thead><tbody>';
     
     for (let i = 0; i < limit; i++) {
@@ -320,6 +291,6 @@
     table.querySelector('tbody').innerHTML = html;
   }
   
-  feather.replace({ 'aria-hidden': 'true' });
+  feather.replace({ 'aria-hidden': true } );
 
 })();
