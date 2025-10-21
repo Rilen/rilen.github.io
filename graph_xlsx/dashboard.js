@@ -8,7 +8,8 @@
   let myChartInstance = null;
   const colorPalette = [
       '#0d6efd', '#dc3545', '#198754', '#ffc107', 
-      '#6c757d', '#6f42c1', '#20c997', '#0dcaf0'
+      '#6c757d', '#6f42c1', '#20c997', '#0dcaf0', 
+      '#641a96', '#00bcd4', '#ff9800', '#8bc34a'
   ];
   
   // ---------------------------------------------
@@ -56,11 +57,11 @@
             // Itera sobre TODAS AS ABAS
             workbook.SheetNames.forEach(sheetName => {
                 const worksheet = workbook.Sheets[sheetName];
-                // Processando a aba como uma categoria
-                const sheetData = processSheetAsCategory(worksheet, sheetName);
+                // Passa o NOME DA ABA como o MÊS/ANO para processamento
+                const sheetData = processSheetData(worksheet, sheetName.trim());
                 
-                if (sheetData.data.length > 0) {
-                    combinedData.push(...sheetData.data);
+                if (sheetData.length > 0) {
+                    combinedData.push(...sheetData);
                     totalSheets++;
                 }
             });
@@ -70,15 +71,15 @@
             }
             
             // 2. AGRUPAR E PREPARAR DADOS PARA O GRÁFICO
-            const chartData = processDataForGroupedBarChart(combinedData);
+            const chartData = prepareDataForStackedBarChart(combinedData);
             
             // 3. GERAR O GRÁFICO
-            drawGroupedBarChart(chartData);
+            drawStackedBarChart(chartData);
             
             // 4. ATUALIZAR A TABELA
             updateTable(combinedData.slice(0, 15));
 
-            statusElement.textContent = `Sucesso! Carregadas ${totalSheets} categorias (abas) do arquivo "${file.name}".`;
+            statusElement.textContent = `Sucesso! Carregadas ${totalSheets} abas (meses/categorias) do arquivo "${file.name}".`;
 
         } catch (error) {
             errorElement.textContent = `ERRO FATAL: ${error.message}`;
@@ -92,115 +93,128 @@
   }
   
   // ---------------------------------------------
-  // FUNÇÃO CORRIGIDA: Lida com Múltiplos Cabeçalhos e Abas
+  // FUNÇÃO CORRIGIDA: Lida com Multi-Linha de Cabeçalho
   // ---------------------------------------------
-  function processSheetAsCategory(worksheet, category) {
-      // Opção 1: Tenta converter para JSON, ignorando 5 linhas (cabeçalhos extras)
-      // Baseado na estrutura típica de planilhas de resumo.
-      const jsonDados = XLSX.utils.sheet_to_json(worksheet, { 
-          header: 1, // Lendo como array de arrays
-          range: 3,  // Tentando começar a leitura a partir da linha 4 (índice 3)
+  function processSheetData(worksheet, monthYear) {
+      // Lê o conteúdo da planilha como uma matriz (Array of Arrays) a partir da linha 1 (índice 0)
+      const dataAsArray = XLSX.utils.sheet_to_json(worksheet, { 
+          header: 1, 
+          range: 0, // Começa a ler da primeira linha
           raw: false, 
           dateNF: 'YYYY-MM-DD' 
       });
       
-      // Se a planilha for muito complexa, header: 1 e range: 3 podem não funcionar.
-      // É preciso inspecionar o arquivo original para saber qual é a linha do cabeçalho de dados.
+      if (dataAsArray.length < 4 || !dataAsArray[1] || !dataAsArray[3]) {
+          console.warn(`Aba ${monthYear} ignorada: Estrutura da planilha muito curta.`);
+          return [];
+      }
       
-      // Assumindo que as colunas de dados são fixas (baseado na estrutura do seu anexo, 
-      // onde a data está na primeira coluna de dados e o valor de venda na última).
+      // Linhas importantes, baseadas no seu anexo:
+      // Linha 2 (índice 1): Contém os nomes das Subcategorias (COMPUTADORES, PERIFÉRICOS, etc.)
+      const subCategoryNames = dataAsArray[1];
       
-      if (jsonDados.length === 0 || !jsonDados[0]) return { data: [] };
-
-      // Se a leitura for bem-sucedida, a primeira linha (jsonDados[0]) contém os cabeçalhos.
-      // Precisamos mapear as colunas: 
-      // Coluna da Data (Fechamento Semanal)
-      // Coluna do Valor de Vendas (Vendas)
+      // Linha 4 (índice 3): Contém os títulos das colunas de dados (Semana, Vendas, etc.)
+      const headers = dataAsArray[3];
+      
+      // O SheetJS pode ler células mescladas como `undefined` ou nulas.
+      // Precisamos identificar o índice da coluna de data (Período Semanal) e o índice da primeira coluna de venda.
       
       let dateColIndex = -1; 
-      let salesColIndex = -1;
+      let firstSalesColIndex = -1;
       
-      const firstDataRow = jsonDados[0];
-
-      // Tenta encontrar as colunas. Ajuste os índices (i) conforme a posição real da coluna na sua planilha
-      // EXEMPLO: Se a data estiver na primeira coluna e o valor de venda na terceira:
-      
-      // TENTATIVA ROBUSTA: Assume que os dados (data e valor) estão nas primeiras colunas de valor
-      // O nome do cabeçalho não importa muito se usarmos a posição (índice)
-      const headers = jsonDados.shift(); // Remove a linha de cabeçalho (que pode ser a 4ª linha do Excel)
-      
-      // A data (Fechamento Semanal) geralmente é a 1ª coluna de dados => Coluna A (índice 0)
-      dateColIndex = 0; 
-      
-      // O valor de Vendas é o que muda por categoria. 
-      // (Se a sua planilha for Data | Vendas, o índice é 1)
-      salesColIndex = 1; 
-
-      if (salesColIndex === -1 || dateColIndex === -1) {
-          console.warn(`Aba ${category}: Colunas de Fechamento/Vendas não encontradas. Verifique a estrutura.`);
-          return { data: [] };
-      }
-
-      const mappedData = [];
-
-      jsonDados.forEach(row => {
-          let newRow = { Categoria: category };
-          
-          let dateValue = row[dateColIndex];
-          let salesValue = parseFloat(row[salesColIndex]);
-
-          // Tenta padronizar a data (se foi lida como número de série)
-          if (typeof dateValue === 'number' && dateValue > 1) { 
-              dateValue = excelDateToYYYYMMDD(dateValue);
-          }
-          
-          if (!isNaN(salesValue) && salesValue > 0 && dateValue) {
-              newRow.Vendas = salesValue;
-              newRow.FechamentoSemanal = dateValue;
-              mappedData.push(newRow);
+      // Encontra a coluna de data (Período Semanal) e a primeira coluna de vendas
+      headers.forEach((header, index) => {
+          if (typeof header === 'string') {
+              const standardizedHeader = header.trim().toLowerCase();
+              if (standardizedHeader.includes('semanal') || standardizedHeader.includes('fechamento')) {
+                  dateColIndex = index;
+              }
+              // Supondo que a primeira coluna que não é de data é a primeira coluna de venda
+              if (firstSalesColIndex === -1 && dateColIndex !== index) {
+                   // Se a coluna não for data, assumimos que é uma coluna de venda (Valor Total)
+                   firstSalesColIndex = index;
+              }
           }
       });
+
+      if (dateColIndex === -1 || firstSalesColIndex === -1) {
+          throw new Error(`Aba ${monthYear}: Não foi possível identificar as colunas de "Fechamento Semanal" e "Vendas/Valor".`);
+      }
       
-      return { data: mappedData };
+      const mappedData = [];
+      
+      // Itera a partir da linha 5 (índice 4) em diante - onde os dados semanais começam
+      for (let i = 4; i < dataAsArray.length; i++) {
+          const row = dataAsArray[i];
+          
+          if (!row || !row[dateColIndex]) continue; // Ignora linhas vazias ou sem data
+          
+          let weeklyDate = row[dateColIndex];
+          
+          // Tenta padronizar a data (se for número de série)
+          if (typeof weeklyDate === 'number' && weeklyDate > 1) { 
+              weeklyDate = excelDateToYYYYMMDD(weeklyDate);
+          }
+          
+          // Itera sobre as colunas de subcategorias/vendas
+          for (let j = firstSalesColIndex; j < row.length; j++) {
+              const salesValue = parseFloat(row[j]);
+              const subcategory = subCategoryNames[j]; // O nome da subcategoria está na linha 2, mesma coluna j
+
+              // Verifica se o nome da subcategoria é válido (e não é vazio/coluna de formatação)
+              if (subcategory && typeof subcategory === 'string' && !isNaN(salesValue) && salesValue > 0) {
+                  mappedData.push({
+                      MêsAno: monthYear,
+                      Subcategoria: subcategory.trim(),
+                      Vendas: salesValue,
+                      FechamentoSemanal: weeklyDate
+                  });
+              }
+          }
+      }
+      
+      return mappedData;
   }
 
   // ---------------------------------------------
   // 2. FUNÇÃO DE AGRUPAMENTO DE DADOS PARA GRÁFICO EMPILHADO
   // ---------------------------------------------
-  function processDataForGroupedBarChart(data) {
-      const salesByPeriodAndCategory = {};
-      const allPeriodsSet = new Set();
-      const allCategoriesSet = new Set();
+  function prepareDataForStackedBarChart(data) {
+      const salesByMonthAndSubcategory = {};
+      const allMonthsSet = new Set();
+      const allSubcategoriesSet = new Set();
 
       data.forEach(row => {
-          const period = row.FechamentoSemanal; 
-          const category = row.Categoria;
+          // O Eixo X será o Mês/Ano (Nome da Aba)
+          const monthKey = row.MêsAno; 
+          const subcategory = row.Subcategoria;
           const sales = row.Vendas;
 
-          if (period && category && !isNaN(sales)) {
-              allPeriodsSet.add(period);
-              allCategoriesSet.add(category);
+          if (monthKey && subcategory && !isNaN(sales)) {
+              allMonthsSet.add(monthKey);
+              allSubcategoriesSet.add(subcategory);
               
-              const key = `${category}|${period}`;
-              salesByPeriodAndCategory[key] = (salesByPeriodAndCategory[key] || 0) + sales;
+              // Chave única para agregação: Subcategoria|Mês
+              const key = `${subcategory}|${monthKey}`;
+              salesByMonthAndSubcategory[key] = (salesByMonthAndSubcategory[key] || 0) + sales;
           }
       });
       
-      // Ordena os períodos cronologicamente (Ex: AAAA-MM-DD)
-      const sortedPeriods = Array.from(allPeriodsSet).sort();
-      const sortedCategories = Array.from(allCategoriesSet).sort();
+      // Ordena as labels do Eixo X
+      const sortedMonths = Array.from(allMonthsSet).sort();
+      const sortedSubcategories = Array.from(allSubcategoriesSet).sort();
       
-      // Cria datasets para cada categoria
-      const datasets = sortedCategories.map((category, index) => {
-          const salesData = sortedPeriods.map(period => {
-              const key = `${category}|${period}`;
-              return salesByPeriodAndCategory[key] || 0; 
+      // Cria datasets para cada subcategoria
+      const datasets = sortedSubcategories.map((subcategory, index) => {
+          const salesData = sortedMonths.map(month => {
+              const key = `${subcategory}|${month}`;
+              return salesByMonthAndSubcategory[key] || 0; // 0 se não houver venda
           });
           
           const color = colorPalette[index % colorPalette.length];
 
           return {
-              label: category,
+              label: subcategory,
               data: salesData,
               backgroundColor: color,
               borderColor: color,
@@ -209,17 +223,16 @@
       });
 
       return {
-          labels: sortedPeriods,
+          labels: sortedMonths,
           datasets: datasets,
-          categories: sortedCategories
+          subcategories: sortedSubcategories
       };
   }
 
   // ---------------------------------------------
-  // FUNÇÃO UTILITÁRIA PARA DATAS (Converte número de série Excel para AAAA-MM-DD)
+  // FUNÇÃO UTILITÁRIA PARA DATAS
   // ---------------------------------------------
   function excelDateToYYYYMMDD(excelSerialNumber) {
-      // 1 é subtraído porque o Excel começa a contar em 1900-01-01 (dia 1)
       const date = new Date(Date.UTC(0, 0, excelSerialNumber - 1));
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -233,8 +246,7 @@
   // ---------------------------------------------
   // 3. FUNÇÃO PARA DESENHAR O GRÁFICO (Barras Empilhadas)
   // --------------------------------------------------------------------------------
-  function drawGroupedBarChart({ labels, datasets }) {
-    // Remove o canvas antigo e insere o novo para garantir o contexto
+  function drawStackedBarChart({ labels, datasets }) {
     chartArea.innerHTML = '<canvas id="dynamicChart" class="chart-canvas"></canvas>';
     const ctx = document.getElementById('dynamicChart').getContext('2d');
     
@@ -245,7 +257,7 @@
     myChartInstance = new Chart(ctx, {
       type: 'bar', 
       data: {
-        labels: labels, // Fechamentos semanais ordenados
+        labels: labels, // Mês/Ano (Nome da Aba)
         datasets: datasets 
       },
       options: {
@@ -254,18 +266,18 @@
         scales: {
           xAxes: [{
             stacked: true, // HABILITA EMPILHAMENTO
-            scaleLabel: { display: true, labelString: 'Fechamento Semanal' }
+            scaleLabel: { display: true, labelString: 'Período (Mês/Ano)' }
           }],
           yAxes: [{
             stacked: true, // HABILITA EMPILHAMENTO
             ticks: { beginAtZero: true },
-            scaleLabel: { display: true, labelString: 'Total de Vendas (Acumulado Semanal)' }
+            scaleLabel: { display: true, labelString: 'Total de Vendas Mensais' }
           }]
         },
         legend: { display: true, position: 'bottom' },
         title: {
           display: true,
-          text: 'Evolução Semanal e Contribuição de Categorias'
+          text: 'Vendas Mensais por Contribuição de Subcategoria'
         }
       }
     });
@@ -280,19 +292,21 @@
     let html = '';
     const limit = Math.min(data.length, 15);
 
-    // Recria o cabeçalho da tabela 
-    table.innerHTML = '<thead><tr><th scope="col">#</th><th scope="col">Categoria</th><th scope="col">Vendas</th><th scope="col">Fechamento Semanal</th></tr></thead><tbody>';
+    // Recria o cabeçalho da tabela com as novas colunas
+    table.innerHTML = '<thead><tr><th scope="col">#</th><th scope="col">Mês/Ano</th><th scope="col">Subcategoria</th><th scope="col">Vendas</th><th scope="col">Fechamento Semanal</th></tr></thead><tbody>';
     
     for (let i = 0; i < limit; i++) {
         const row = data[i];
-        const category = row.Categoria || '';
+        const monthYear = row.MêsAno || '';
+        const subcategory = row.Subcategoria || '';
         const sales = row.Vendas !== undefined ? String(row.Vendas) : ''; 
         const weeklyPeriod = row.FechamentoSemanal || '';
 
         html += `
             <tr>
                 <td>${i + 1}</td>
-                <td>${category}</td>
+                <td>${monthYear}</td>
+                <td>${subcategory}</td>
                 <td>${sales}</td>
                 <td>${weeklyPeriod}</td>
             </tr>
@@ -300,7 +314,7 @@
     }
 
     if (data.length > 15) {
-         html += `<tr><td colspan="4">Mostrando apenas as primeiras 15 linhas de ${data.length} registros no total.</td></tr>`;
+         html += `<tr><td colspan="5">Mostrando apenas as primeiras 15 linhas de ${data.length} registros no total.</td></tr>`;
     }
 
     table.querySelector('tbody').innerHTML = html;
