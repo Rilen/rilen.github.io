@@ -97,6 +97,7 @@
         } catch (error) {
             errorElement.textContent = `ERRO FATAL: ${error.message}`;
             statusElement.textContent = 'Falha no processamento. Verifique o console (F12).';
+            if (myChartInstance) myChartInstance.destroy();
             console.error("Erro no processamento do arquivo Excel:", error);
             chartArea.innerHTML = '';
         }
@@ -113,13 +114,13 @@
       if (parts.length >= 2) {
           const monthName = parts[0];
           const year = parts[parts.length - 1];
-          const monthCode = MONTH_ORDER[monthName] || '99'; // '99' para meses não mapeados (e novos)
+          const monthCode = MONTH_ORDER[monthName] || '99'; 
 
           if (year && year.length === 4) {
               return `${year}-${monthCode}`;
           }
       }
-      return `0000-${monthYearString}`; // Fallback para meses não reconhecidos
+      return `0000-${monthYearString}`; // Fallback
   }
 
   // ---------------------------------------------
@@ -137,12 +138,12 @@
       
       const subCategoryNames = dataAsArray[1]; // Linha 2 (Subcategorias)
       const dataStartRowIndex = 2; // Linha 3 (Dados)
+      
       const periodColIndex = 0; // Coluna 1 (Nº SEMANA)
       const firstSalesColIndex = 1; // Coluna 2 (Início das Vendas)
 
       const mappedData = [];
       
-      // Itera a partir da primeira linha de dados (Índice 2)
       for (let i = dataStartRowIndex; i < dataAsArray.length; i++) {
           const row = dataAsArray[i];
           
@@ -151,14 +152,15 @@
           const weeklyPeriod = row[periodColIndex]; 
           
           for (let j = firstSalesColIndex; j < row.length; j++) {
+              // Vendas agora representa QUANTIDADE
               const salesValue = parseFloat(row[j]);
-              const subcategory = subCategoryNames[j];
+              const subcategory = subCategoryNames[j]; 
 
               if (subcategory && typeof subcategory === 'string' && !subcategory.includes('nan') && !isNaN(salesValue) && salesValue > 0) {
                   mappedData.push({
                       MêsAno: monthYear,
                       Subcategoria: subcategory.trim(),
-                      Vendas: salesValue,
+                      Vendas: salesValue, // Vendas é a QUANTIDADE
                       FechamentoSemanal: weeklyPeriod 
                   });
               }
@@ -186,12 +188,11 @@
               allSubcategoriesSet.add(subcategory);
               
               const key = `${subcategory}|${monthKey}`;
-              // Acumula todas as vendas semanais para o total mensal da subcategoria
               salesByMonthAndSubcategory[key] = (salesByMonthAndSubcategory[key] || 0) + sales; 
           }
       });
       
-      // ORDENAÇÃO CRONOLÓGICA (NOVO REQUISITO)
+      // ORDENAÇÃO CRONOLÓGICA
       const sortedMonths = Array.from(allMonthsSet).sort((a, b) => {
           const keyA = getSortableMonthKey(a);
           const keyB = getSortableMonthKey(b);
@@ -200,7 +201,6 @@
       
       const sortedSubcategories = Array.from(allSubcategoriesSet).sort();
       
-      // Cria datasets para cada subcategoria
       const datasets = sortedSubcategories.map((subcategory, index) => {
           const salesData = sortedMonths.map(month => {
               const key = `${subcategory}|${month}`;
@@ -253,41 +253,41 @@
           yAxes: [{
             stacked: true, // HABILITA EMPILHAMENTO
             ticks: { beginAtZero: true },
-            scaleLabel: { display: true, labelString: 'Total de Vendas Mensais' }
+            scaleLabel: { display: true, labelString: 'Quantidade Total Mensal' } // RÓTULO CORRIGIDO
           }]
         },
         legend: { display: true, position: 'bottom' },
         title: {
           display: true,
-          text: 'Vendas Mensais por Contribuição de Subcategoria'
+          text: 'Quantidade Total Vendida por Contribuição de Subcategoria' // RÓTULO CORRIGIDO
         }
       }
     });
   }
 
   // ---------------------------------------------
-  // 4. FUNÇÃO PARA PREPARAR DADOS PARA A TABELA (NOVO REQUISITO)
+  // 4. FUNÇÃO PARA PREPARAR DADOS PARA A TABELA (Consolidada)
   // ---------------------------------------------
   function aggregateDataForTable(combinedData) {
       const monthlyTotalMap = {};
 
       combinedData.forEach(row => {
           const monthKey = row.MêsAno;
-          const sales = row.Vendas;
+          const sales = row.Vendas; // Vendas é a quantidade
 
           if (monthKey && !isNaN(sales)) {
               monthlyTotalMap[monthKey] = (monthlyTotalMap[monthKey] || 0) + sales;
           }
       });
 
-      // Converte para o formato de array para a tabela e ordena cronologicamente
+      // Ordena cronologicamente
       return Object.keys(monthlyTotalMap).sort((a, b) => {
           const keyA = getSortableMonthKey(a);
           const keyB = getSortableMonthKey(b);
           return keyA.localeCompare(keyB);
       }).map(month => ({
           MêsAno: month,
-          Vendas: monthlyTotalMap[month].toFixed(2) // Formata com 2 casas decimais
+          Vendas: monthlyTotalMap[month].toFixed(0) // Quantidade total (sem casas decimais)
       }));
   }
 
@@ -299,15 +299,15 @@
     
     let html = '';
     
-    // Altera o cabeçalho para refletir a agregação (Apenas Mês/Ano e Total)
-    table.innerHTML = '<thead><tr><th scope="col">#</th><th scope="col">Mês/Ano</th><th scope="col">Vendas Totais</th></tr></thead><tbody>';
+    // Cabeçalho alterado: Mês/Ano e Quantidade Total
+    table.innerHTML = '<thead><tr><th scope="col">#</th><th scope="col">Mês/Ano</th><th scope="col">Quantidade Total</th></tr></thead><tbody>';
     
     data.forEach((row, index) => {
         html += `
             <tr>
                 <td>${index + 1}</td>
                 <td>${row.MêsAno}</td>
-                <td>R$ ${row.Vendas}</td>
+                <td>${row.Vendas}</td>
             </tr>
         `;
     });
