@@ -32,7 +32,6 @@
     const files = e.target.files;
     if (files.length === 0) return;
     
-    // Como o 'multiple' foi removido, files[0] é o único arquivo.
     const file = files[0];
     const reader = new FileReader();
 
@@ -57,10 +56,11 @@
             // Itera sobre TODAS AS ABAS
             workbook.SheetNames.forEach(sheetName => {
                 const worksheet = workbook.Sheets[sheetName];
-                // Lendo a aba como se fosse uma categoria
+                // Processando a aba como uma categoria
                 const sheetData = processSheetAsCategory(worksheet, sheetName);
-                if (sheetData.length > 0) {
-                    combinedData.push(...sheetData);
+                
+                if (sheetData.data.length > 0) {
+                    combinedData.push(...sheetData.data);
                     totalSheets++;
                 }
             });
@@ -92,45 +92,76 @@
   }
   
   // ---------------------------------------------
-  // FUNÇÃO PARA PROCESSAR UMA ÚNICA ABA COMO UMA CATEGORIA
+  // FUNÇÃO CORRIGIDA: Lida com Múltiplos Cabeçalhos e Abas
   // ---------------------------------------------
   function processSheetAsCategory(worksheet, category) {
+      // Opção 1: Tenta converter para JSON, ignorando 5 linhas (cabeçalhos extras)
+      // Baseado na estrutura típica de planilhas de resumo.
       const jsonDados = XLSX.utils.sheet_to_json(worksheet, { 
+          header: 1, // Lendo como array de arrays
+          range: 3,  // Tentando começar a leitura a partir da linha 4 (índice 3)
           raw: false, 
           dateNF: 'YYYY-MM-DD' 
       });
       
-      if (jsonDados.length === 0) return [];
+      // Se a planilha for muito complexa, header: 1 e range: 3 podem não funcionar.
+      // É preciso inspecionar o arquivo original para saber qual é a linha do cabeçalho de dados.
+      
+      // Assumindo que as colunas de dados são fixas (baseado na estrutura do seu anexo, 
+      // onde a data está na primeira coluna de dados e o valor de venda na última).
+      
+      if (jsonDados.length === 0 || !jsonDados[0]) return { data: [] };
+
+      // Se a leitura for bem-sucedida, a primeira linha (jsonDados[0]) contém os cabeçalhos.
+      // Precisamos mapear as colunas: 
+      // Coluna da Data (Fechamento Semanal)
+      // Coluna do Valor de Vendas (Vendas)
+      
+      let dateColIndex = -1; 
+      let salesColIndex = -1;
+      
+      const firstDataRow = jsonDados[0];
+
+      // Tenta encontrar as colunas. Ajuste os índices (i) conforme a posição real da coluna na sua planilha
+      // EXEMPLO: Se a data estiver na primeira coluna e o valor de venda na terceira:
+      
+      // TENTATIVA ROBUSTA: Assume que os dados (data e valor) estão nas primeiras colunas de valor
+      // O nome do cabeçalho não importa muito se usarmos a posição (índice)
+      const headers = jsonDados.shift(); // Remove a linha de cabeçalho (que pode ser a 4ª linha do Excel)
+      
+      // A data (Fechamento Semanal) geralmente é a 1ª coluna de dados => Coluna A (índice 0)
+      dateColIndex = 0; 
+      
+      // O valor de Vendas é o que muda por categoria. 
+      // (Se a sua planilha for Data | Vendas, o índice é 1)
+      salesColIndex = 1; 
+
+      if (salesColIndex === -1 || dateColIndex === -1) {
+          console.warn(`Aba ${category}: Colunas de Fechamento/Vendas não encontradas. Verifique a estrutura.`);
+          return { data: [] };
+      }
 
       const mappedData = [];
-      const requiredDataHeaders = ['Vendas', 'FechamentoSemanal'];
 
       jsonDados.forEach(row => {
           let newRow = { Categoria: category };
-          let validVendas = false;
+          
+          let dateValue = row[dateColIndex];
+          let salesValue = parseFloat(row[salesColIndex]);
 
-          for (const key in row) {
-              const standardizedKey = key.trim().toLowerCase(); 
-              
-              if (standardizedKey.includes('vendas')) {
-                  newRow.Vendas = parseFloat(row[key]);
-                  validVendas = !isNaN(newRow.Vendas) && newRow.Vendas > 0;
-              } else if (standardizedKey.includes('fechamento') || standardizedKey.includes('semanal')) {
-                  // O Eixo X será a data do fechamento
-                  let dateValue = row[key];
-                  if (typeof dateValue === 'number' && dateValue > 1) { 
-                      dateValue = excelDateToYYYYMMDD(dateValue);
-                  }
-                  newRow.FechamentoSemanal = dateValue;
-              }
+          // Tenta padronizar a data (se foi lida como número de série)
+          if (typeof dateValue === 'number' && dateValue > 1) { 
+              dateValue = excelDateToYYYYMMDD(dateValue);
           }
           
-          if (validVendas && newRow.FechamentoSemanal) {
+          if (!isNaN(salesValue) && salesValue > 0 && dateValue) {
+              newRow.Vendas = salesValue;
+              newRow.FechamentoSemanal = dateValue;
               mappedData.push(newRow);
           }
       });
       
-      return mappedData;
+      return { data: mappedData };
   }
 
   // ---------------------------------------------
@@ -142,7 +173,7 @@
       const allCategoriesSet = new Set();
 
       data.forEach(row => {
-          const period = row.FechamentoSemanal; // Data de Fechamento Semanal (Eixo X)
+          const period = row.FechamentoSemanal; 
           const category = row.Categoria;
           const sales = row.Vendas;
 
@@ -150,13 +181,12 @@
               allPeriodsSet.add(period);
               allCategoriesSet.add(category);
               
-              // Chave única para agregação: Categoria|Data
               const key = `${category}|${period}`;
               salesByPeriodAndCategory[key] = (salesByPeriodAndCategory[key] || 0) + sales;
           }
       });
       
-      // Ordena os períodos cronologicamente (se estiverem em AAAA-MM-DD)
+      // Ordena os períodos cronologicamente (Ex: AAAA-MM-DD)
       const sortedPeriods = Array.from(allPeriodsSet).sort();
       const sortedCategories = Array.from(allCategoriesSet).sort();
       
@@ -164,7 +194,7 @@
       const datasets = sortedCategories.map((category, index) => {
           const salesData = sortedPeriods.map(period => {
               const key = `${category}|${period}`;
-              return salesByPeriodAndCategory[key] || 0; // 0 se não houver venda
+              return salesByPeriodAndCategory[key] || 0; 
           });
           
           const color = colorPalette[index % colorPalette.length];
@@ -189,6 +219,7 @@
   // FUNÇÃO UTILITÁRIA PARA DATAS (Converte número de série Excel para AAAA-MM-DD)
   // ---------------------------------------------
   function excelDateToYYYYMMDD(excelSerialNumber) {
+      // 1 é subtraído porque o Excel começa a contar em 1900-01-01 (dia 1)
       const date = new Date(Date.UTC(0, 0, excelSerialNumber - 1));
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -244,12 +275,12 @@
   // 4. FUNÇÃO PARA ATUALIZAR A TABELA DE DADOS
   // ---------------------------------------------
   function updateTable(data) {
-    if (!tableBody) return;
+    if (!tableBody || !table) return;
     
     let html = '';
     const limit = Math.min(data.length, 15);
 
-    // Recria o cabeçalho da tabela (para garantir que esteja limpo)
+    // Recria o cabeçalho da tabela 
     table.innerHTML = '<thead><tr><th scope="col">#</th><th scope="col">Categoria</th><th scope="col">Vendas</th><th scope="col">Fechamento Semanal</th></tr></thead><tbody>';
     
     for (let i = 0; i < limit; i++) {
