@@ -1,4 +1,0 @@
-streamlit
-pandas
-openpyxl  # Necessário para ler o formato .xlsx
-plotly
