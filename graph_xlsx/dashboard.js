@@ -21,7 +21,7 @@
   if (uploadInput) {
       uploadInput.addEventListener('change', handleFile, false);
   } else {
-      console.error("Elemento de upload 'excel-upload' não encontrado.");
+      console.error("Elemento de upload 'excel-upload' não encontrado. Verifique o ID.");
   }
 
 
@@ -36,10 +36,19 @@
     statusElement.textContent = `Carregando: ${file.name}...`;
     errorElement.textContent = '';
     
-    // Limpar área do dashboard
+    // Limpar área do dashboard (garantindo que abas e conteúdo dinâmico sejam removidos)
     categoryTabsContainer.innerHTML = '';
     tabContentContainer.innerHTML = '';
-    tableBody.innerHTML = '<tr><td colspan="4">Processando...</td></tr>';
+    
+    // Destruir instâncias antigas de gráficos
+    for (const key in chartInstances) {
+        if (chartInstances[key]) {
+            chartInstances[key].destroy();
+        }
+    }
+    // Esvaziar o objeto de instâncias
+    Object.keys(chartInstances).forEach(key => delete chartInstances[key]);
+
 
     reader.onload = function(event) {
       try {
@@ -74,6 +83,7 @@
       } catch (error) {
         errorElement.textContent = `ERRO: ${error.message}`;
         statusElement.textContent = 'Erro no processamento.';
+        tableBody.innerHTML = '<tr><td colspan="4">Erro de processamento.</td></tr>';
         console.error("Erro no processamento do arquivo Excel:", error);
       }
     };
@@ -116,7 +126,7 @@
   }
 
   // ---------------------------------------------
-  // 3. GERAÇÃO DE ABAS E GRÁFICOS
+  // 3. GERAÇÃO DE ABAS E GRÁFICOS (CORRIGIDA)
   // ---------------------------------------------
   function createTabsAndCharts(groupedData) {
       let isFirst = true;
@@ -126,12 +136,12 @@
           const isCategoryActive = isFirst ? 'active' : '';
 
           // 1. Cria a Aba (nav-item)
-          const tabHtml = `
+          const tabButtonHtml = `
               <li class="nav-item" role="presentation">
                   <button class="nav-link ${isCategoryActive}" id="${slug}-tab" data-bs-toggle="tab" data-bs-target="#${slug}-content" type="button" role="tab" aria-controls="${slug}-content" aria-selected="${isFirst}">${category}</button>
               </li>
           `;
-          categoryTabsContainer.insertAdjacentHTML('beforeend', tabHtml);
+          categoryTabsContainer.insertAdjacentHTML('beforeend', tabButtonHtml);
 
           // 2. Cria o Conteúdo da Aba (Gráfico Canvas)
           const contentHtml = `
@@ -143,31 +153,36 @@
           `;
           tabContentContainer.insertAdjacentHTML('beforeend', contentHtml);
 
+          // 3. Desenha o gráfico (apenas para a primeira aba, o resto é desenhado no 'shown.bs.tab')
+          if (isFirst) {
+              const canvasId = `chart-${slug}`;
+              const ctx = document.getElementById(canvasId).getContext('2d');
+              chartInstances[slug] = drawChart(ctx, category, groupedData[category].labels, groupedData[category].data);
+          }
+
           isFirst = false;
       }
       
-      // Espera um pequeno tempo para o Bootstrap renderizar as abas e cria os gráficos
-      // Nota: O Bootstrap 5 usa classes para o Tab, mas o .tab('show') só é necessário para
-      // troca dinâmica. No carregamento, a lógica de JS precisa aguardar a injeção do HTML.
-      setTimeout(() => {
-          // Inicializa os gráficos (Chart.js)
-          for (const category in groupedData) {
-              const slug = category.replace(/\s+/g, '-').toLowerCase();
-              const canvasId = `chart-${slug}`;
-              const ctx = document.getElementById(canvasId).getContext('2d');
-              
-              chartInstances[slug] = drawChart(ctx, category, groupedData[category].labels, groupedData[category].data);
-          }
-      }, 100);
-      
-      // Adiciona um listener para a troca de abas (para garantir que o gráfico seja redimensionado)
+      // 4. Adiciona listener para a troca de abas
+      // CORREÇÃO CRÍTICA: Isso garante que o gráfico só será desenhado (ou redimensionado)
+      // quando a aba estiver visível e anexada ao DOM.
       const tabTriggers = categoryTabsContainer.querySelectorAll('button[data-bs-toggle="tab"]');
       tabTriggers.forEach(trigger => {
           trigger.addEventListener('shown.bs.tab', event => {
               const targetId = event.target.getAttribute('data-bs-target').substring(1);
               const slug = targetId.replace('-content', '');
-              // Redimensiona o gráfico para a nova aba
-              if (chartInstances[slug]) {
+              
+              if (!chartInstances[slug]) {
+                  // Desenha o gráfico na primeira vez que a aba é aberta
+                  const categoryName = event.target.textContent;
+                  const data = groupedData[categoryName];
+                  
+                  const canvasId = `chart-${slug}`;
+                  const ctx = document.getElementById(canvasId).getContext('2d');
+                  chartInstances[slug] = drawChart(ctx, categoryName, data.labels, data.data);
+
+              } else {
+                  // Redimensiona o gráfico se ele já existe (boa prática do Chart.js)
                   chartInstances[slug].resize();
               }
           });
@@ -249,5 +264,7 @@
     html += '</tbody>';
     table.innerHTML = html;
   }
+  
+  feather.replace({ 'aria-hidden': 'true' });
 
 })();
