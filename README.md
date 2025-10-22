@@ -22,33 +22,31 @@
 
 ## Projetos 📂
 
-- [Products Classification with AI](https://github.com/ChristianoDS/products_classification)
+- [Gerador de gráfico do arquivo Excel](https://github.com/Rilen/xlsx2chart)
+- Em breve mais projetos...
+<!--
 - [Sales Forecasting](https://github.com/ChristianoDS/rossmann_project)
 - [Zomato Data Analysis](https://github.com/ChristianoDS/zomato_project)
 - [Machine Learning Tests](https://github.com/ChristianoDS/ensaio-machine-learning)
+-->
 
-<!--# Papers 📑
+<!--
+# Papers 📑
 #### I have published a paper in a renowned scientific journal applying machine learning in my Phd research. 📝
 
-### [Paper](https://www.sciencedirect.com/science/article/pii/S2212982024000155)-->
+### [Paper](https://www.sciencedirect.com/science/article/pii/S2212982024000155)
+-->
 
 
-# Atualmente continuo aprendendo sobre 📖
+## Atualmente continuo aprendendo sobre 📖
 - Data Science
 - Machine Learning
 - Gen. IA
 - Artificial Inteligence
 - Storytelling
 
-# Meus links 📧
+## Meus links 📧
 
 [![Portfolio](https://img.shields.io/badge/Portfolio-4285F4?style=for-the-badge&logo=google-chrome&logoColor=white)](https://rilen.github.io/portfolio_ds/)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/rilen/)
 [![Gmail](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:rilen.lima@gmail.com)
-
-
-
-
-
-
-
