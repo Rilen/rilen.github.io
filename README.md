@@ -24,6 +24,7 @@
 
 - [Gerador de gráfico do arquivo Excel](https://github.com/Rilen/xlsx2chart)
 - Em breve mais projetos...
+
 <!--
 - [Sales Forecasting](https://github.com/ChristianoDS/rossmann_project)
 - [Zomato Data Analysis](https://github.com/ChristianoDS/zomato_project)
