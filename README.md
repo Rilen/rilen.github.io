@@ -1,53 +1,65 @@
-## Olá, sou um Cientista de Dados e 📊🎲 Especialista em Big Data. ⛏️🔍
-#### Atuo mais de 25 anos na área de TI. 💾🔧 e entusiasta da evolução da tecnologia. 🤖🌐
+# 🌟 Rilen Tavares | Expert em Big Data & Resiliência Digital 📊
 
-![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=rilen&show_icons=true&theme=holi)
-![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=rilen&layout=compact&theme=holi)
+## Olá! Sou um Especialista em Infraestrutura Sênior e Cientista de Dados ⛏️🔍
 
-## Algumas ferramentas com as quais estou usando 🔨
+Com mais de **25 anos de expertise em TI**, minha carreira foi construída no ecossistema **Open Source** e amadurecida na **Ciência de Dados**. Uno a robustez da infraestrutura crítica com a agilidade de sistemas autônomos e preditivos.
 
-![LlamaIndex](https://img.shields.io/badge/LlamaIndex-6600cc?style=for-the-badge&logo=llamaindex&logoColor=white)
-![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![SQL](https://img.shields.io/badge/SQL-00000F?style=for-the-badge&logo=postgresql&logoColor=white)
-![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
-![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
-![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
-![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)
-![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
-![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
-![Terminal](https://img.shields.io/badge/Terminal-FF4B4B?style=for-the-badge&logo=terminal&logoColor=white)
+> **Diferencial Estratégico:** Como usuário de **implante coclear**, desenvolvi uma capacidade de **Deep Work (foco profundo)** e comunicação escrita técnica impecável, competências essenciais para arquitetura de dados e análise de ambientes críticos.
 
-## Projetos 📂
+---
 
-- [Gerador de gráfico do arquivo Excel](https://github.com/Rilen/xlsx2chart)
-- Em breve mais projetos...
+## 🎯 Portfólio & Showcase Visual
 
-<!--
-- [Sales Forecasting](https://github.com/ChristianoDS/rossmann_project)
-- [Zomato Data Analysis](https://github.com/ChristianoDS/zomato_project)
-- [Machine Learning Tests](https://github.com/ChristianoDS/ensaio-machine-learning)
--->
+Para uma experiência imersiva nos meus modelos de Machine Learning e Dashboards estratégicos:
 
-<!--
-# Papers 📑
-#### I have published a paper in a renowned scientific journal applying machine learning in my Phd research. 📝
+➡️ **[ACESSE MEU PORTFÓLIO INTERATIVO AQUI](https://rilen.github.io/portfolio/)**
 
-### [Paper](https://www.sciencedirect.com/science/article/pii/S2212982024000155)
--->
+---
 
+## 🛠️ Stack Tecnológica & Ferramentas
 
-## Atualmente continuo aprendendo sobre 📖
-- Data Science
-- Machine Learning
-- Gen. IA
-- Artificial Inteligence
-- Storytelling
+Minha capacidade de entrega é fundamentada em ferramentas que escalam do diagnóstico à produção:
 
-## Meus links 📧
+| Categoria | Tecnologias |
+| :--- | :--- |
+| **Data Science / IA** | ![LlamaIndex](https://img.shields.io/badge/LlamaIndex-6600cc?style=flat-square&logo=llamaindex&logoColor=white) ![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=flat-square&logo=scikit-learn&logoColor=white) ![Pandas](https://img.shields.io/badge/Pandas-150458?style=flat-square&logo=pandas&logoColor=white) |
+| **Linguagens & BD** | ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white) ![SQL](https://img.shields.io/badge/SQL-00000F?style=flat-square&logo=postgresql&logoColor=white) ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white) |
+| **Infra & DevOps** | ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white) ![AWS](https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=amazon-aws&logoColor=white) ![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black) |
+| **Visualização** | ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=flat-square&logo=streamlit&logoColor=white) ![VSCode](https://img.shields.io/badge/VS_Code-007ACC?style=flat-square&logo=visual-studio-code&logoColor=white) |
 
-[![Portfolio](https://img.shields.io/badge/Portfolio-4285F4?style=for-the-badge&logo=google-chrome&logoColor=white)](https://rilen.github.io/portfolio_ds/)
+---
+
+## 📂 Projetos de Engenharia em Destaque
+
+Transformo telemetria e Big Data em valor de negócio mensurável:
+
+- **[IrrigaSeca 1.15](https://github.com/rilen/IrrigaSeca):** Solução de **MLOps & IoT** para Agricultura de Precisão. Automação baseada em parâmetros agronômicos reais (PMP/CC) e telemetria dinâmica.
+- **[xlsx2chart](https://github.com/Rilen/xlsx2chart):** Pipeline de **Engenharia de Dados** que realiza o parsing e consolidação de XLSX complexos em dashboards dinâmicos (Vanilla JS).
+- **[Geoprocessamento Agro](https://github.com/rilen/PROJETO-GEOPROCESSAMENTO-AGRO):** Monitoramento de saúde de culturas via satélite e análise de dados geoespaciais.
+
+---
+
+## 📈 Estatísticas & Insights de Código
+
+<p align="center">
+  <img src="https://github-readme-stats.vercel.app/api?username=rilen&show_icons=true&theme=holi" alt="Estatísticas do GitHub" />
+  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=rilen&layout=compact&theme=holi" alt="Linguagens mais usadas" />
+</p>
+
+---
+
+## 📖 Atualmente Focado em Aprofundamento Sênior
+- **Arquitetura de IA Generativa (LLMs)** e RAG com LlamaIndex.
+- **Cybersecurity & Resiliência Digital:** GRC nativo em projetos de dados.
+- **Deep Learning** aplicado à visão computacional no agronegócio.
+
+---
+
+## 💼 Conecte-se com a Vida Nova
+
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/rilen/)
 [![Gmail](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:rilen.lima@gmail.com)
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/rilen)
+
+---
+*Maturidade profissional e paixão técnica por Python e IA para gerar resultados imediatos.*
