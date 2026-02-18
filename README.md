@@ -4,7 +4,7 @@
 
 Com mais de **25 anos de expertise em TI**, minha carreira foi construída no ecossistema **Open Source** e amadurecida na **Ciência de Dados**. Uno a robustez da infraestrutura crítica com a agilidade de sistemas autônomos e preditivos.
 
-> **Diferencial Estratégico:** Como usuário de **implante coclear**, desenvolvi uma capacidade de **Deep Work (foco profundo)** e comunicação escrita técnica impecável, competências essenciais para arquitetura de dados e análise de ambientes críticos.
+> **Diferencial Estratégico:** Como usuário de **implante coclear**, desenvolvi uma capacidade de **Deep Work (foco profundo)** e comunicação técnica impecável, competências essenciais para arquitetura de dados e análise de ambientes críticos.
 
 ---
 
