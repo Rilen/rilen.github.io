@@ -39,15 +39,6 @@ Transformo telemetria e Big Data em valor de negócio mensurável:
 
 ---
 
-## 📈 Estatísticas & Insights de Código
-
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=rilen&show_icons=true&theme=holi" alt="Estatísticas do GitHub" />
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=rilen&layout=compact&theme=holi" alt="Linguagens mais usadas" />
-</p>
-
----
-
 ## 📖 Atualmente Focado em Aprofundamento Sênior
 - **Arquitetura de IA Generativa (LLMs)** e RAG com LlamaIndex.
 - **Cybersecurity & Resiliência Digital:** GRC nativo em projetos de dados.
