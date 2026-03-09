@@ -1,6 +1,6 @@
 # Rilen T. L. - DataScience
 
-**25+ anos em TI - Especialista em Big Data | IA | CyberSecurity**
+**25+ anos TI - Especialista em Big Data -  IA - CyberSecurity**
 
 ***Full Stack Development & Data Intelligence***
 
