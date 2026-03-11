@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="pt-br">
 
 <head>
 	<title>Rilen T. L. Data Scientist · Full Stack · Infraestrutura Crítica</title>
@@ -7,14 +7,31 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<meta name="description"
 		content="Rilen T. L. — Data Scientist com 25+ anos em infraestrutura crítica. Especialista em Big Data, IA, TypeScript, Firebase e Resiliência Digital." />
+	
+	<!-- Open Graph / Facebook -->
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://rilen.github.io/portfolio/" />
+	<meta property="og:title" content="Rilen Tavares Lima · Data Scientist & Full Stack" />
+	<meta property="og:description" content="25+ anos em TI, Big Data, IA e Resiliência Digital. Explore meus projetos e soluções técnicas." />
+	<meta property="og:image" content="https://rilen.github.io/portfolio/images/pic01.jpg" />
+
+	<!-- Twitter -->
+	<meta property="twitter:card" content="summary_large_image" />
+	<meta property="twitter:url" content="https://rilen.github.io/portfolio/" />
+	<meta property="twitter:title" content="Rilen Tavares Lima · Data Scientist & Full Stack" />
+	<meta property="twitter:description" content="25+ anos em TI, Big Data, IA e Resiliência Digital. Explore meus projetos e soluções técnicas." />
+	<meta property="twitter:image" content="https://rilen.github.io/portfolio/images/pic01.jpg" />
 	<link rel="stylesheet" href="assets/css/main.css" />
+	<link rel="stylesheet" href="assets/css/custom.css" />
 	<noscript>
 		<link rel="stylesheet" href="assets/css/noscript.css" />
 	</noscript>
 	<script src="https://kit.fontawesome.com/c8e235e165.js" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-	<script>(function () { emailjs.init("H-yPKZR-FXHhE96fK"); })();</script>
 	<script src="https://d3js.org/d3.v7.min.js"></script>
+	<script>
+		(function () { emailjs.init("H-yPKZR-FXHhE96fK"); })();
+	</script>
 	<script type="application/ld+json">
 		{
 		"@context": "https://schema.org",
@@ -31,272 +48,6 @@
 		"knowsAbout": ["Big Data", "AI", "CyberSecurity", "TypeScript", "Linux"]
 		}
 	</script>
-	<style>
-		/* Estilos da Stack */
-		#stack .table-wrapper table img {
-			margin: 0.2rem;
-			vertical-align: middle;
-			transition: transform 0.2s ease, filter 0.2s ease;
-		}
-
-		#stack .table-wrapper table img:hover {
-			transform: scale(1.1);
-			filter: brightness(1.2);
-		}
-
-		#stack table td {
-			vertical-align: middle;
-		}
-
-		#stack table strong {
-			color: #ffe4b4;
-		}
-
-		/* Barra de Acessibilidade */
-		.a11y-bar {
-			position: fixed;
-			top: 50%;
-			right: 1.5rem;
-			transform: translateY(-50%);
-			display: flex;
-			flex-direction: column;
-			gap: 0.75rem;
-			z-index: 10000;
-			background: rgba(255, 255, 255, 0.1);
-			backdrop-filter: blur(10px);
-			padding: 0.75rem;
-			border-radius: 2rem;
-			border: 1px solid rgba(255, 255, 255, 0.2);
-			transition: all 0.3s ease;
-		}
-
-		.a11y-bar button {
-			width: 2.5rem;
-			height: 2.5rem;
-			border-radius: 50%;
-			border: none;
-			background: rgba(255, 255, 255, 0.1);
-			color: white;
-			cursor: pointer;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-size: 1.2rem;
-			transition: background 0.2s, transform 0.2s;
-			padding: 0;
-			line-height: normal;
-			box-shadow: none;
-		}
-
-		.a11y-bar button:hover {
-			background: #ffe4b4;
-			color: #2e2b37;
-			transform: scale(1.1);
-		}
-
-		/* RilenBot Widget & Styles */
-		#chat-widget {
-			position: fixed;
-			bottom: 2rem;
-			right: 2rem;
-			z-index: 10001;
-		}
-
-		#rilenbot-trigger {
-			width: 4rem;
-			height: 4rem;
-			background: linear-gradient(135deg, #726193, #e37b7c);
-			border-radius: 50%;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			color: white;
-			font-size: 1.8rem;
-			cursor: pointer;
-			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-			transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-		}
-
-		#rilenbot-trigger:hover {
-			transform: scale(1.1) rotate(5deg);
-		}
-
-		#chat-container {
-			display: none;
-			flex-direction: column;
-			width: 350px;
-			height: 500px;
-			background: #242943;
-			border: 2px solid #4e54c8;
-			border-radius: 10px;
-			position: absolute;
-			bottom: 5rem;
-			right: 0;
-			box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-			overflow: hidden;
-			font-family: inherit;
-		}
-
-		#chat-header {
-			background: #2a2f4a;
-			padding: 1rem;
-			border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-		}
-
-		#chat-header .bot-info {
-			display: flex;
-			align-items: center;
-			gap: 0.5rem;
-		}
-
-		#chat-header .bot-info img {
-			width: 2rem;
-			height: 2rem;
-			border-radius: 50%;
-			border: 1px solid #4e54c8;
-		}
-
-		#chat-header strong {
-			color: #ffe4b4;
-		}
-
-		#chat-messages {
-			flex: 1;
-			padding: 1.25rem;
-			overflow-y: auto;
-			background: rgba(0, 0, 0, 0.1);
-		}
-
-		.message {
-			margin-bottom: 1rem;
-			padding: 0.8rem;
-			border-radius: 5px;
-			font-size: 0.85rem;
-			line-height: 1.4;
-			max-width: 85%;
-		}
-
-		.message.bot {
-			background: rgba(78, 84, 200, 0.2);
-			border-left: 3px solid #4e54c8;
-			color: #fff;
-			align-self: flex-start;
-		}
-
-		.message.user {
-			background: rgba(255, 255, 255, 0.05);
-			text-align: right;
-			align-self: flex-end;
-			margin-left: auto;
-		}
-
-		#chat-suggestions {
-			padding: 0 1rem 1rem;
-			display: flex;
-			flex-wrap: wrap;
-			gap: 5px;
-		}
-
-		.suggestion-btn {
-			background: rgba(78, 84, 200, 0.1);
-			border: 1px solid #4e54c8;
-			color: #ffe4b4;
-			font-size: 0.7rem;
-			padding: 4px 10px;
-			border-radius: 15px;
-			cursor: pointer;
-			transition: all 0.2s ease;
-			font-family: inherit;
-		}
-
-		.suggestion-btn:hover {
-			background: #4e54c8;
-			color: white;
-			transform: translateY(-2px);
-		}
-
-		#chat-footer {
-			padding: 1rem;
-			background: #2a2f4a;
-			display: flex;
-			gap: 10px;
-			align-items: center;
-			border-top: 1px solid rgba(255, 255, 255, 0.1);
-		}
-
-		#chat-input {
-			flex: 1;
-			background: #1d213b !important;
-			border-color: #3d4465 !important;
-			color: white !important;
-			height: 2.5rem !important;
-			padding: 0 0.75rem !important;
-			margin: 0 !important;
-		}
-
-		#chat-send {
-			padding: 0 1rem !important;
-			min-width: auto;
-			height: 2.5rem !important;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			margin: 0 !important;
-		}
-
-		/* High Contrast Mode */
-		body.high-contrast {
-			filter: contrast(1.2) brightness(1.1);
-		}
-
-		body.high-contrast section.panel {
-			background-image: none !important;
-			background-color: #000 !important;
-		}
-
-		body.high-contrast strong {
-			color: #ffff00 !important;
-		}
-
-		/* D3 activity mock */
-		#github-activity {
-			width: 100%;
-			height: 120px;
-			margin-top: 1rem;
-			background: rgba(255, 255, 255, 0.05);
-			border-radius: 0.5rem;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-size: 0.7rem;
-			opacity: 0.8;
-		}
-
-		/* Mobile Adjustments */
-		@media screen and (max-width: 480px) {
-			#chat-container {
-				width: 90vw;
-				height: 70vh;
-				right: 5vw;
-				bottom: 6rem;
-			}
-
-			.a11y-bar {
-				right: 0.5rem;
-				gap: 0.5rem;
-				padding: 0.5rem;
-			}
-
-			.a11y-bar button {
-				width: 2rem;
-				height: 2rem;
-				font-size: 1rem;
-			}
-		}
-	</style>
 </head>
 
 <body class="is-preload">
@@ -678,201 +429,7 @@
 	<script src="assets/js/browser.min.js"></script>
 	<script src="assets/js/breakpoints.min.js"></script>
 	<script src="assets/js/main.js"></script>
-	<script>
-		window.sendEmail = function (event) {
-			event.preventDefault();
-			emailjs.sendForm('service_na1fzjo', 'template_706q96k', '#contact-form')
-				.then(function () {
-					alert('Mensagem enviada com sucesso! Retornarei em breve.');
-					document.getElementById('contact-form').reset();
-				}, function (error) {
-					alert('Erro no envio. Por favor, conecte-se pelo LinkedIn.');
-				});
-			return false;
-		};
-
-		// Acessibilidade logic
-		let fontSize = 1;
-		window.changeFontSize = function (delta) {
-			fontSize += delta * 0.1;
-			fontSize = Math.min(Math.max(fontSize, 0.8), 1.5);
-			document.documentElement.style.fontSize = `${fontSize}vmax`;
-		};
-
-		window.toggleContrast = function () {
-			document.body.classList.toggle('high-contrast');
-		};
-
-		// RilenBot Logic
-		const rilenbotTrigger = document.getElementById('rilenbot-trigger');
-		const chatContainer = document.getElementById('chat-container');
-		const chatInput = document.getElementById('chat-input');
-		const chatMessages = document.getElementById('chat-messages');
-		const chatSend = document.getElementById('chat-send');
-
-		rilenbotTrigger.addEventListener('click', () => {
-			const isVisible = chatContainer.style.display === 'flex';
-			chatContainer.style.display = isVisible ? 'none' : 'flex';
-		});
-
-		window.sendQuickQuestion = function (text) {
-			chatInput.value = text;
-			chatSend.click();
-			document.getElementById('chat-suggestions').style.display = 'none';
-		};
-
-		function appendMessage(sender, text) {
-			const div = document.createElement('div');
-			div.className = `message ${sender === 'RilenBot' ? 'bot' : 'user'}`;
-			div.innerHTML = text;
-			chatMessages.appendChild(div);
-			chatMessages.scrollTop = chatMessages.scrollHeight;
-		}
-
-		chatSend.addEventListener('click', async () => {
-			const text = chatInput.value.trim();
-			if (text) {
-				appendMessage('Você', text);
-				chatInput.value = '';
-
-				// CONEXÃO COM O RILENBOT REAL (Cloudflare Worker + Google Gemini)
-				try {
-					const workerUrl = "https://rilen-bot-api.rilen-lima.workers.dev"; // ⚠️ Substitua pela sua URL real
-
-					if (workerUrl && !workerUrl.includes("SUA_URL_DO_WORKER")) {
-						const response = await fetch(workerUrl, {
-							method: "POST",
-							headers: { "Content-Type": "application/json" },
-							body: JSON.stringify({ question: text })
-						});
-
-						if (!response.ok) throw new Error("Worker responded with error");
-
-						const data = await response.json();
-						appendMessage('RilenBot', data.reply);
-						return;
-					}
-				} catch (err) {
-					console.error("Erro no Worker, usando Fallback:", err);
-				}
-
-				// Mocked Edge RAG response (Fallback/Demo)
-				setTimeout(() => {
-					let response = "Interessante! Como especialista em IA e Infra, o Rilen foca muito nesse ponto. ";
-					if (text.toLowerCase().includes('ostras')) {
-						response = "O Preve-Ostras é um dos meus orgulhos. Usa D3.js e React 19 para monitorar marés e chuvas em tempo real em Rio das Ostras.";
-					} else if (text.toLowerCase().includes('deep')) {
-						response = "O 'Deep Work nativo' do Rilen vem da sua concentração absoluta, potencializada pelo implante coclear. É o silêncio que gera precisão.";
-					} else if (text.toLowerCase().includes('segurança') || text.toLowerCase().includes('security')) {
-						response = "Segurança é a base. O Rilen aplica hardening sênior e GRC em todos os deploys, garantindo que o código nasça seguro.";
-					} else {
-						response += "Para detalhes técnicos profundos, recomendo conferir o LinkedIn ou me perguntar sobre projetos específicos!";
-					}
-					appendMessage('RilenBot', response);
-				}, 600);
-			}
-		});
-
-		chatInput.addEventListener('keydown', (e) => {
-			if (e.key === ' ') {
-				e.stopPropagation();
-			}
-			if (e.key === 'Enter') {
-				e.preventDefault();
-				chatSend.click();
-			}
-		});
-
-		// D3.js GitHub Activity Pulse
-		async function initGithubPulse() {
-			try {
-				const response = await fetch('https://api.github.com/users/rilen/events/public');
-				const events = await response.json();
-
-				// Process events: last 14 days
-				const now = new Date();
-				const dates = d3.timeDays(d3.timeDay.offset(now, -14), d3.timeDay.offset(now, 1));
-				const counts = new Map(dates.map(d => [d.toISOString().slice(0, 10), 0]));
-
-				events.forEach(e => {
-					const date = e.created_at.slice(0, 10);
-					if (counts.has(date)) {
-						counts.set(date, (counts.get(date) || 0) + 1);
-					}
-				});
-
-				const data = dates.map(d => ({
-					date: d,
-					count: counts.get(d.toISOString().slice(0, 10))
-				}));
-
-				const container = d3.select("#githubPulse");
-				const width = container.node().getBoundingClientRect().width;
-				const height = 80;
-				const margin = { top: 5, right: 5, bottom: 5, left: 5 };
-
-				const svg = container.append("svg")
-					.attr("width", "100%")
-					.attr("height", height)
-					.attr("viewBox", `0 0 ${width} ${height}`);
-
-				const x = d3.scaleTime()
-					.domain(d3.extent(data, d => d.date))
-					.range([margin.left, width - margin.right]);
-
-				const y = d3.scaleLinear()
-					.domain([0, d3.max(data, d => d.count) || 5])
-					.range([height - margin.bottom, margin.top]);
-
-				// Gradient
-				const gradient = svg.append("defs")
-					.append("linearGradient")
-					.attr("id", "pulse-gradient")
-					.attr("x1", "0%").attr("y1", "0%")
-					.attr("x2", "0%").attr("y2", "100%");
-				gradient.append("stop").attr("offset", "0%").attr("stop-color", "#e37b7c");
-				gradient.append("stop").attr("offset", "100%").attr("stop-color", "rgba(114, 97, 147, 0)");
-
-				const area = d3.area()
-					.x(d => x(d.date))
-					.y0(height - margin.bottom)
-					.y1(d => y(d.count))
-					.curve(d3.curveMonotoneX);
-
-				const line = d3.line()
-					.x(d => x(d.date))
-					.y(d => y(d.count))
-					.curve(d3.curveMonotoneX);
-
-				svg.append("path")
-					.datum(data)
-					.attr("fill", "url(#pulse-gradient)")
-					.attr("d", area);
-
-				svg.append("path")
-					.datum(data)
-					.attr("fill", "none")
-					.attr("stroke", "#ffe4b4")
-					.attr("stroke-width", 1.5)
-					.attr("d", line);
-
-				// Dots for active days
-				svg.selectAll("circle")
-					.data(data.filter(d => d.count > 0))
-					.enter().append("circle")
-					.attr("cx", d => x(d.date))
-					.attr("cy", d => y(d.count))
-					.attr("r", 2)
-					.attr("fill", "#ffe4b4");
-
-			} catch (err) {
-				console.error("Error loading GitHub activity:", err);
-				d3.select("#githubPulse").text("Offline");
-			}
-		}
-
-		window.addEventListener('load', initGithubPulse);
-	</script>
+	<script src="assets/js/custom.js"></script>
 </body>
 
 </html>
