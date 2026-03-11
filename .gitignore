@@ -1,0 +1,25 @@
+# Bloqueio de dependências e arquivos de sistema
+node_modules/
+.wrangler/
+dist/
+build/
+.git/
+.github/
+
+# Ignorar arquivos de processamento de imagem (xcf é fonte, não web)
+edição/
+**/edi*/**
+**/*.xcf
+
+# Ignorar cópias de segurança do index
+index-*.html
+index copy.html
+index - Copia.html
+index - Copia (2).html
+index_15022026.html
+
+# Logs e arquivos temporários
+*.log
+test_query.json
+.DS_Store
+Thumbs.db

@@ -1,0 +1,32 @@
+# Ignorar TUDO o que for node_modules (e subpastas)
+node_modules/
+**/node_modules/**
+
+# Ignorar binários e arquivos do sistema Cloudflare
+.wrangler/
+.git/
+.github/
+workerd
+**/workerd/**
+rilen-bot-api/
+
+# Pastas de design e fontes pesadas
+edição/
+**/edi*/**
+**/*.xcf
+assets/sass/
+assets/webfonts/*.svg
+
+# Arquivos de Lock e Config (não são arquivos do site)
+package.json
+package-lock.json
+bun.lockb
+wrangler.toml
+wrangler.jsonc
+REAL_BOT_SETUP.md
+README*
+LICENSE*
+
+# Backups
+index-*.html
+!index.html

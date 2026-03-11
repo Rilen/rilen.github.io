@@ -1,0 +1,6 @@
+name = "rilen-bot-api"
+main = "index.js"
+compatibility_date = "2024-03-01"
+
+[observability]
+enabled = true
