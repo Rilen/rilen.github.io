@@ -24,9 +24,9 @@ npx wrangler deploy
 Após o deploy, a Cloudflare exibirá uma URL como: `https://rilen-bot-api.seu-nome.workers.dev`.
 
 ## 3. Conectar o Frontend
-1. Abra `public/index.html`.
-2. Vá até a linha **743**.
-3. Substitua `SUA_URL_DO_WORKER.workers.dev` pela URL que você recebeu no passo acima.
+1. Abra `assets/js/custom.js`.
+2. Vá até a linha **42** (procurar por `workerUrl`).
+3. Substitua `https://rilen-bot-api.rilen-lima.workers.dev` pela URL que você recebeu no passo acima.
 
 ## 4. Corrigindo o Erro "Asset too large"
 O erro ocorreu porque o Wrangler tentou subir a pasta `node_modules` inteira. 
