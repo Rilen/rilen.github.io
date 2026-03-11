@@ -1,0 +1,878 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<title>Rilen T. L. Data Scientist · Full Stack · Infraestrutura Crítica</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<meta name="description"
+		content="Rilen T. L. — Data Scientist com 25+ anos em infraestrutura crítica. Especialista em Big Data, IA, TypeScript, Firebase e Resiliência Digital." />
+	<link rel="stylesheet" href="assets/css/main.css" />
+	<noscript>
+		<link rel="stylesheet" href="assets/css/noscript.css" />
+	</noscript>
+	<script src="https://kit.fontawesome.com/c8e235e165.js" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+	<script>(function () { emailjs.init("H-yPKZR-FXHhE96fK"); })();</script>
+	<script src="https://d3js.org/d3.v7.min.js"></script>
+	<script type="application/ld+json">
+		{
+		"@context": "https://schema.org",
+		"@type": "Person",
+		"name": "Rilen Tavares Lima",
+		"jobTitle": "Data Scientist & Full Stack Developer",
+		"address": {
+			"@type": "PostalAddress",
+			"addressLocality": "Rio das Ostras",
+			"addressRegion": "RJ",
+			"addressCountry": "BR"
+		},
+		"url": "https://rilen.github.io/portfolio/",
+		"knowsAbout": ["Big Data", "AI", "CyberSecurity", "TypeScript", "Linux"]
+		}
+	</script>
+	<style>
+		/* Estilos da Stack */
+		#stack .table-wrapper table img {
+			margin: 0.2rem;
+			vertical-align: middle;
+			transition: transform 0.2s ease, filter 0.2s ease;
+		}
+
+		#stack .table-wrapper table img:hover {
+			transform: scale(1.1);
+			filter: brightness(1.2);
+		}
+
+		#stack table td {
+			vertical-align: middle;
+		}
+
+		#stack table strong {
+			color: #ffe4b4;
+		}
+
+		/* Barra de Acessibilidade */
+		.a11y-bar {
+			position: fixed;
+			top: 50%;
+			right: 1.5rem;
+			transform: translateY(-50%);
+			display: flex;
+			flex-direction: column;
+			gap: 0.75rem;
+			z-index: 10000;
+			background: rgba(255, 255, 255, 0.1);
+			backdrop-filter: blur(10px);
+			padding: 0.75rem;
+			border-radius: 2rem;
+			border: 1px solid rgba(255, 255, 255, 0.2);
+			transition: all 0.3s ease;
+		}
+
+		.a11y-bar button {
+			width: 2.5rem;
+			height: 2.5rem;
+			border-radius: 50%;
+			border: none;
+			background: rgba(255, 255, 255, 0.1);
+			color: white;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1.2rem;
+			transition: background 0.2s, transform 0.2s;
+			padding: 0;
+			line-height: normal;
+			box-shadow: none;
+		}
+
+		.a11y-bar button:hover {
+			background: #ffe4b4;
+			color: #2e2b37;
+			transform: scale(1.1);
+		}
+
+		/* RilenBot Widget & Styles */
+		#chat-widget {
+			position: fixed;
+			bottom: 2rem;
+			right: 2rem;
+			z-index: 10001;
+		}
+
+		#rilenbot-trigger {
+			width: 4rem;
+			height: 4rem;
+			background: linear-gradient(135deg, #726193, #e37b7c);
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: white;
+			font-size: 1.8rem;
+			cursor: pointer;
+			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+			transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+		}
+
+		#rilenbot-trigger:hover {
+			transform: scale(1.1) rotate(5deg);
+		}
+
+		#chat-container {
+			display: none;
+			flex-direction: column;
+			width: 350px;
+			height: 500px;
+			background: #242943;
+			border: 2px solid #4e54c8;
+			border-radius: 10px;
+			position: absolute;
+			bottom: 5rem;
+			right: 0;
+			box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+			overflow: hidden;
+			font-family: inherit;
+		}
+
+		#chat-header {
+			background: #2a2f4a;
+			padding: 1rem;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		#chat-header .bot-info {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+		}
+
+		#chat-header .bot-info img {
+			width: 2rem;
+			height: 2rem;
+			border-radius: 50%;
+			border: 1px solid #4e54c8;
+		}
+
+		#chat-header strong {
+			color: #ffe4b4;
+		}
+
+		#chat-messages {
+			flex: 1;
+			padding: 1.25rem;
+			overflow-y: auto;
+			background: rgba(0, 0, 0, 0.1);
+		}
+
+		.message {
+			margin-bottom: 1rem;
+			padding: 0.8rem;
+			border-radius: 5px;
+			font-size: 0.85rem;
+			line-height: 1.4;
+			max-width: 85%;
+		}
+
+		.message.bot {
+			background: rgba(78, 84, 200, 0.2);
+			border-left: 3px solid #4e54c8;
+			color: #fff;
+			align-self: flex-start;
+		}
+
+		.message.user {
+			background: rgba(255, 255, 255, 0.05);
+			text-align: right;
+			align-self: flex-end;
+			margin-left: auto;
+		}
+
+		#chat-suggestions {
+			padding: 0 1rem 1rem;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 5px;
+		}
+
+		.suggestion-btn {
+			background: rgba(78, 84, 200, 0.1);
+			border: 1px solid #4e54c8;
+			color: #ffe4b4;
+			font-size: 0.7rem;
+			padding: 4px 10px;
+			border-radius: 15px;
+			cursor: pointer;
+			transition: all 0.2s ease;
+			font-family: inherit;
+		}
+
+		.suggestion-btn:hover {
+			background: #4e54c8;
+			color: white;
+			transform: translateY(-2px);
+		}
+
+		#chat-footer {
+			padding: 1rem;
+			background: #2a2f4a;
+			display: flex;
+			gap: 10px;
+			align-items: center;
+			border-top: 1px solid rgba(255, 255, 255, 0.1);
+		}
+
+		#chat-input {
+			flex: 1;
+			background: #1d213b !important;
+			border-color: #3d4465 !important;
+			color: white !important;
+			height: 2.5rem !important;
+			padding: 0 0.75rem !important;
+			margin: 0 !important;
+		}
+
+		#chat-send {
+			padding: 0 1rem !important;
+			min-width: auto;
+			height: 2.5rem !important;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 0 !important;
+		}
+
+		/* High Contrast Mode */
+		body.high-contrast {
+			filter: contrast(1.2) brightness(1.1);
+		}
+
+		body.high-contrast section.panel {
+			background-image: none !important;
+			background-color: #000 !important;
+		}
+
+		body.high-contrast strong {
+			color: #ffff00 !important;
+		}
+
+		/* D3 activity mock */
+		#github-activity {
+			width: 100%;
+			height: 120px;
+			margin-top: 1rem;
+			background: rgba(255, 255, 255, 0.05);
+			border-radius: 0.5rem;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 0.7rem;
+			opacity: 0.8;
+		}
+
+		/* Mobile Adjustments */
+		@media screen and (max-width: 480px) {
+			#chat-container {
+				width: 90vw;
+				height: 70vh;
+				right: 5vw;
+				bottom: 6rem;
+			}
+
+			.a11y-bar {
+				right: 0.5rem;
+				gap: 0.5rem;
+				padding: 0.5rem;
+			}
+
+			.a11y-bar button {
+				width: 2rem;
+				height: 2rem;
+				font-size: 1rem;
+			}
+		}
+	</style>
+</head>
+
+<body class="is-preload">
+	<div id="page-wrapper">
+		<div id="wrapper">
+
+			<!-- BANNER -->
+			<section class="panel banner right">
+				<div class="content color0 span-3-75">
+					<h1 class="major">Rilen Tavares Lima</h1>
+					<p>
+						<strong>Data Scientist - Especialista em Big Data - IA - CyberSecurity</strong><br />
+						Mais de <strong>25 anos</strong> atuando na área de TI, convergindo <strong>GNU/Linux</strong>,
+						escalando computação nas nuvens, promovendo
+						<strong>Ciência
+							de Dados</strong> e <strong>desenvolvimento Full Stack</strong> em soluções que nascem
+						seguras e ampliam com inteligência.
+					</p>
+					<p style="margin-top:0.5em; font-size:0.85em; opacity:0.75;">
+						Rio das Ostras/RJ
+					</p>
+					<ul class="actions" style="margin-top:1.5em;">
+						<li><a href="#projects" class="button primary color1 circle icon solid fa-chart-line">Ver
+								Projetos</a></li>
+						<li><a href="#contact" class="button color1 circle icon solid fa-envelope"
+								style="margin-left:0.5em;">Contato</a></li>
+					</ul>
+				</div>
+				<div class="image filtered span-1-75" data-position="25% 25%">
+					<img src="images/pic01.jpg" alt="Rilen Tavares - Data Scientist" loading="lazy" />
+				</div>
+			</section>
+
+			<!-- SOBRE -->
+			<section class="panel color1" id="first">
+				<div class="intro joined">
+					<h2 class="major">Infraestrutura.<br />Dados.<br />Código.</h2>
+					<p>
+						Sou um ativo que une <strong>hardening de cloud computing</strong>,
+						<strong>modelagem preditiva</strong> e <strong>desenvolvimento Full Stack</strong> no mesmo
+						ciclo de entrega. Como usuário de <strong>implante coclear</strong>, desenvolvi o <strong>Deep
+							Work nativo</strong> — uma capacidade excepcional de processamento técnico em silêncio
+						absoluto,
+						onde a arquitetura de dados e código flui com precisão cirúrgica, livre das distrações do ruído
+						ambiente.
+					</p>
+				</div>
+				<div class="inner">
+					<h3 class="major">Eixos de Atuação</h3>
+					<ul class="grid-icons three connected">
+						<li><span class="icon solid fa-brain" title="IA & Machine Learning" aria-hidden="true"><span
+									class="label">IA &
+									ML</span></span></li>
+						<li><span class="icon solid fa-database" title="Big Data & Engenharia de Dados"
+								aria-hidden="true"><span class="label">Big Data</span></span></li>
+						<li><span class="icon solid fa-code" title="Full Stack TypeScript / React / Angular"
+								aria-hidden="true"><span class="label">Full Stack</span></span></li>
+						<li><span class="icon solid fa-shield-alt" title="Cybersecurity & GRC" aria-hidden="true"><span
+									class="label">GRC &
+									Sec</span></span></li>
+						<li><span class="icon solid fa-server" title="Infraestrutura GNU/Linux Sênior"
+								aria-hidden="true"><span class="label">Linux</span></span></li>
+						<li><span class="icon solid fa-map-marked-alt" title="Geoespacial & Resiliência Urbana"
+								aria-hidden="true"><span class="label">GeoData</span></span></li>
+					</ul>
+				</div>
+			</section>
+
+			<!-- PROJETOS DESTAQUE -->
+			<section class="panel color2" id="projects">
+				<div class="intro color2">
+					<h2 class="major">Projetos</h2>
+					<p>Da análise territorial preditiva à gestão condominial premium — soluções completas, da
+						infraestrutura ao deploy.</p>
+				</div>
+				<div class="gallery">
+					<div class="group span-3">
+
+						<!-- PREVE-OSTRAS -->
+						<a href="https://preve-ostras.web.app" target="_blank" class="image filtered span-3"
+							data-position="center">
+							<img src="images/PreveOstras.png" alt="Preve-Ostras" loading="lazy" />
+							<span class="caption">
+								<span class="title">🌊 Preve-Ostras · Inteligência Territorial</span>
+								<p>Resiliência urbana em tempo real: marés, chuvas e risco (D3.js + React 19).</p>
+								<i class="icon brands fa-github" aria-hidden="true"></i> Ver Repositório
+							</span>
+						</a>
+
+						<!-- BOOSTMARK -->
+						<a href="https://boost--mark.web.app" target="_blank" class="image filtered span-1-5"
+							data-position="top">
+							<img src="images/BoostMark.png" alt="BoostMark" />
+							<span class="caption">
+								<span class="title">⚡ BoostMark · Sell-Out Intelligence</span>
+								<p>Dashboard comercial para varejo com Curva ABC e alertas de ruptura (React 19).</p>
+								<i class="icon brands fa-github"></i> Ver Repositório
+							</span>
+						</a>
+
+						<!-- ANALISTA IA PRO -->
+						<a href="https://github.com/rilen/pipeline" target="_blank" class="image filtered span-1-5"
+							data-position="top">
+							<img src="images/PipeDash.png" alt="Analista IA PRO" />
+							<span class="caption">
+								<span class="title">🤖 Analista IA PRO · Pipeline EDA</span>
+								<p>Plataforma de análise exploratória com OCR e IA híbrida (Streamlit + Gemini).</p>
+								<i class="icon brands fa-github"></i> Ver Repositório
+							</span>
+						</a>
+
+					</div>
+					<div class="group span-3">
+
+						<!-- SINDI-FÁCIL -->
+						<a href="https://github.com/Rilen/sindi-facil" target="_blank" class="image filtered span-1-5"
+							data-position="top">
+							<img src="images/SindioFacil.png" alt="Sindi-Fácil" />
+							<span class="caption">
+								<span class="title">🏙️ Sindi-Fácil · Gestão Condominial</span>
+								<p>Plataforma completa com RBAC e módulos financeiros (React 19 + Firebase).</p>
+								<i class="icon brands fa-github"></i> Ver Repositório
+							</span>
+						</a>
+
+						<!-- BIBLEDS -->
+						<a href="https://bibleds.web.app" target="_blank" class="image filtered span-1-5"
+							data-position="top">
+							<img src="images/BibleDS.png" alt="BibleDS" />
+							<span class="caption">
+								<span class="title">📖 BibleDS · Hyper-Analytics</span>
+								<p>Motor semântico AI-Driven sobre o corpus bíblico (Observable + Tailwind).</p>
+								<i class="icon brands fa-github"></i> Ver Repositório
+							</span>
+						</a>
+
+						<!-- PNSC DIGITAL -->
+						<a href="#" class="image filtered span-3" data-position="center">
+							<img src="images/PNSCCoroinhas.png" alt="PNSC Digital" />
+							<span class="caption">
+								<span class="title">⛪ PNSC Digital · Gestão Paroquial</span>
+								<p>Escalas automáticas e gamificação para servidores litúrgicos (Flutter + Firebase).
+								</p>
+							</span>
+						</a>
+
+					</div>
+					<div class="group span-3">
+
+						<!-- IRRIGASECA -->
+						<a href="https://github.com/rilen/IrrigaSeca" target="_blank" class="image filtered span-3"
+							data-position="top">
+							<img src="images/IrrigaSeca.png" alt="IrrigaSeca" />
+							<span class="caption">
+								<span class="title">🌱 IrrigaSeca · MLOps & IoT</span>
+								<p>Automação de irrigação via modelos preditivos de umidade (ESP32 + Python).</p>
+							</span>
+						</a>
+
+						<!-- XLSX2CHART -->
+						<a href="https://rilen.github.io/xlsx2chart/" target="_blank" class="image filtered span-1-5"
+							data-position="top">
+							<img src="images/Xlx2Chart.png" alt="xlsx2chart" />
+							<span class="caption">
+								<span class="title">📊 xlsx2chart · Pipeline ETL</span>
+								<p>Consolidação de planilhas complexas em dashboards dinâmicos (Vanilla JS).</p>
+							</span>
+						</a>
+
+						<!-- SANTO ROSÁRIO -->
+						<a href="#" class="image filtered span-1-5" data-position="top">
+							<img src="images/RezarSempre.png" alt="Santo Rosário" />
+							<span class="caption">
+								<span class="title">📿 Santo Rosário · Devocional Digital</span>
+								<p>Guia interativo de oração com sinalização visual e lógica litúrgica.</p>
+							</span>
+						</a>
+
+					</div>
+
+				</div>
+			</section>
+
+			<!-- PROJETOS COMPLEMENTARES -->
+			<section class="panel color2">
+				<div class="gallery">
+
+
+					<!-- NELIR AI -->
+					<a href="#chat-widget" class="image filtered span-2-5" data-position="bottom">
+						<img src="images/NelirAiEngine.png" alt="Nelir AI Engine" />
+						<span class="caption">
+							<span class="title">🤖 Nelir AI · Cognitive Engine</span>
+							<p>IA generativa com RAG para interação e automação inteligente.</p>
+						</span>
+					</a>
+
+
+				</div>
+			</section>
+
+			<!-- STACK -->
+			<section class="panel color5-alt" id="stack">
+				<div class="intro color5">
+					<h2 class="major">Stack & Ferramentas</h2>
+					<p>Tecnologias que uso do diagnóstico ao deploy em produção. Foco em <strong>resiliência
+							digital</strong> e
+						<strong>hardening de infraestrutura</strong>, com histórico de mitigação de riscos em ambientes
+						de missão crítica.
+					</p>
+				</div>
+				<div class="inner columns">
+					<div class="span-4-5">
+						<div class="table-wrapper">
+							<table class="alt">
+								<thead>
+									<tr>
+										<th>Camada</th>
+										<th>Tecnologias</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td><strong>IA & Data Science</strong></td>
+										<td>
+											<img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python" />
+											<img src="https://img.shields.io/badge/scikit--learn-F7931E?style=flat-square&logo=scikit-learn&logoColor=white" alt="scikit-learn" />
+											<img src="https://img.shields.io/badge/Pandas-150458?style=flat-square&logo=pandas&logoColor=white" alt="Pandas" />
+											<img src="https://img.shields.io/badge/LlamaIndex-6600cc?style=flat-square&logoColor=white" alt="LlamaIndex" />
+											<img src="https://img.shields.io/badge/OpenAI-412991?style=flat-square&logo=openai&logoColor=white" alt="OpenAI" />
+											<img src="https://img.shields.io/badge/Gemini-4285F4?style=flat-square&logo=google-gemini&logoColor=white" alt="Gemini" />
+											<img src="https://img.shields.io/badge/HuggingFace-FFD21E?style=flat-square&logo=huggingface&logoColor=black" alt="HuggingFace" />
+										</td>
+									</tr>
+									<tr>
+										<td><strong>Full Stack & Mobile</strong></td>
+										<td>
+											<img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
+											<img src="https://img.shields.io/badge/Angular-DD0031?style=flat-square&logo=angular&logoColor=white" alt="Angular" />
+											<img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React" />
+											<img src="https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite" />
+											<img src="https://img.shields.io/badge/Android-3DDC84?style=flat-square&logo=android&logoColor=white" alt="Android" />
+											<img src="https://img.shields.io/badge/Kotlin-7F52FF?style=flat-square&logo=kotlin&logoColor=white" alt="Kotlin" />
+										</td>
+									</tr>
+									<tr>
+										<td><strong>Banco de Dados</strong></td>
+										<td>
+											<img src="https://img.shields.io/badge/Firebase-FF6F00?style=flat-square&logo=firebase&logoColor=white" alt="Firebase" />
+											<img src="https://img.shields.io/badge/SQL-00000F?style=flat-square&logo=postgresql&logoColor=white" alt="SQL" />
+											<img src="https://img.shields.io/badge/NoSQL-4db33d?style=flat-square&logo=mongodb&logoColor=white" alt="NoSQL" />
+											<img src="https://img.shields.io/badge/SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white" alt="SQLite" />
+										</td>
+									</tr>
+									<tr>
+										<td><strong>Infra / Cloud / Edge</strong></td>
+										<td>
+											<img src="https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black" alt="Linux" />
+											<img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker" />
+											<img src="https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=amazon-aws&logoColor=white" alt="AWS" />
+											<img src="https://img.shields.io/badge/Cloudflare-F38020?style=flat-square&logo=cloudflare&logoColor=white" alt="Cloudflare" />
+											<img src="https://img.shields.io/badge/Runtime-V8-444444?style=flat-square&logo=gitbook&logoColor=white" alt="V8" />
+											<img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white" alt="GitHub" />
+										</td>
+									</tr>
+									<tr>
+										<td><strong>Visualização & GRC</strong></td>
+										<td>
+											<img src="https://img.shields.io/badge/D3.js-F9A03C?style=flat-square&logo=d3.js&logoColor=white" alt="D3.js" />
+											<img src="https://img.shields.io/badge/Streamlit-FF4B4B?style=flat-square&logo=streamlit&logoColor=white" alt="Streamlit" />
+											<img src="https://img.shields.io/badge/GRC-Hardening-blueviolet?style=flat-square" alt="GRC" />
+											<img src="https://img.shields.io/badge/Zabbix-CC0000?style=flat-square&logo=zabbix&logoColor=white" alt="Zabbix" />
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- CONTATO -->
+			<section class="panel color4-alt" id="contact">
+				<div class="intro color4">
+					<h2 class="major">Vamos Conversar</h2>
+					<p>Buscando desafios onde infraestrutura sólida, dados inteligentes e código que vai para produção
+						se encontram. Disponível para projetos, consultoria e posições sênior.</p>
+				</div>
+				<div class="inner columns divided">
+					<div class="span-3-25">
+						<form id="contact-form" onsubmit="return sendEmail(event)">
+							<div class="fields">
+								<div class="field half">
+									<label for="name">Nome</label>
+									<input type="text" name="name" id="name" required />
+								</div>
+								<div class="field half">
+									<label for="email">Email</label>
+									<input type="email" name="email" id="email" required />
+								</div>
+								<div class="field">
+									<label for="message">Mensagem</label>
+									<textarea name="message" id="message" rows="4" required></textarea>
+								</div>
+							</div>
+							<ul class="actions">
+								<li><input type="submit" value="Enviar Mensagem" class="button primary" /></li>
+							</ul>
+						</form>
+					</div>
+					<div class="span-1-5">
+						<ul class="contact-icons color1">
+							<li class="icon brands fa-linkedin"><a href="https://www.linkedin.com/in/rilen/"
+									target="_blank" aria-label="LinkedIn de Rilen Tavares">linkedin.com/in/rilen</a>
+							</li>
+							<li class="icon brands fa-github"><a href="https://github.com/rilen" target="_blank"
+									aria-label="GitHub de Rilen Tavares">github.com/rilen</a></li>
+							<li class="icon solid fa-envelope"><a href="mailto:rilen.lima@gmail.com"
+									aria-label="Enviar email para Rilen">rilen.lima@gmail.com</a></li>
+							<li class="icon solid fa-map-marker-alt"><span aria-label="Localização">Rio das Ostras · RJ
+									· Brasil</span></li>
+						</ul>
+						<div id="github-activity"
+							style="display: block; height: 140px; text-align: left; padding: 10px;">
+							<span
+								style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; color: #ffe4b4;">
+								<i class="icon solid fa-pulse fa-heartbeat" style="margin-right: 5px;"></i> Activity
+								Pulse (14d)
+							</span>
+							<div id="githubPulse" style="width: 100%; height: 100%;"></div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<div class="copyright">&copy; RTL 2026 · Infraestrutura sólida. Dados inteligentes. Código que vai para
+				produção.</div>
+
+		</div>
+	</div>
+
+	<!-- Acessibilidade e RilenBot -->
+	<div class="a11y-bar" role="complementary" aria-label="Controles de Acessibilidade">
+		<button onclick="changeFontSize(1)" title="Aumentar Fonte" aria-label="Aumentar Fonte"><i
+				class="fas fa-plus"></i></button>
+		<button onclick="changeFontSize(-1)" title="Diminuir Fonte" aria-label="Diminuir Fonte"><i
+				class="fas fa-minus"></i></button>
+		<button onclick="toggleContrast()" title="Alto Contraste" aria-label="Alternar Alto Contraste"><i
+				class="fas fa-adjust"></i></button>
+	</div>
+
+	<div id="chat-widget">
+		<div id="rilenbot-trigger" title="Falar com RilenBot (AI)" aria-label="Ajuda da IA"
+			style="padding: 0; overflow: hidden; border: 2px solid #4e54c8;">
+			<img src="images/rilenbot-avatar.png" alt="RilenBot"
+				style="width: 100%; height: 100%; object-fit: cover;" />
+		</div>
+		<div id="chat-container">
+			<div id="chat-header">
+				<div class="bot-info">
+					<img src="images/rilenbot-avatar.png" alt="Avatar RilenBot" />
+					<strong>Nelir</strong>
+				</div>
+				<span style="font-size: 0.7em; opacity: 0.5;">v2.0 - Edge RAG</span>
+			</div>
+			<div id="chat-messages">
+				<div class="message bot">
+					Olá! Sou Nelir, a IA do Rilen. Como posso te ajudar hoje?
+				</div>
+			</div>
+			<div id="chat-footer">
+				<input type="text" id="chat-input" placeholder="Digite sua dúvida...">
+				<button id="chat-send" class="button primary small"><i class="fas fa-paper-plane"></i></button>
+			</div>
+		</div>
+	</div>
+
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/browser.min.js"></script>
+	<script src="assets/js/breakpoints.min.js"></script>
+	<script src="assets/js/main.js"></script>
+	<script>
+		window.sendEmail = function (event) {
+			event.preventDefault();
+			emailjs.sendForm('service_na1fzjo', 'template_706q96k', '#contact-form')
+				.then(function () {
+					alert('Mensagem enviada com sucesso! Retornarei em breve.');
+					document.getElementById('contact-form').reset();
+				}, function (error) {
+					alert('Erro no envio. Por favor, conecte-se pelo LinkedIn.');
+				});
+			return false;
+		};
+
+		// Acessibilidade logic
+		let fontSize = 1;
+		window.changeFontSize = function (delta) {
+			fontSize += delta * 0.1;
+			fontSize = Math.min(Math.max(fontSize, 0.8), 1.5);
+			document.documentElement.style.fontSize = `${fontSize}vmax`;
+		};
+
+		window.toggleContrast = function () {
+			document.body.classList.toggle('high-contrast');
+		};
+
+		// RilenBot Logic
+		const rilenbotTrigger = document.getElementById('rilenbot-trigger');
+		const chatContainer = document.getElementById('chat-container');
+		const chatInput = document.getElementById('chat-input');
+		const chatMessages = document.getElementById('chat-messages');
+		const chatSend = document.getElementById('chat-send');
+
+		rilenbotTrigger.addEventListener('click', () => {
+			const isVisible = chatContainer.style.display === 'flex';
+			chatContainer.style.display = isVisible ? 'none' : 'flex';
+		});
+
+		window.sendQuickQuestion = function (text) {
+			chatInput.value = text;
+			chatSend.click();
+			document.getElementById('chat-suggestions').style.display = 'none';
+		};
+
+		function appendMessage(sender, text) {
+			const div = document.createElement('div');
+			div.className = `message ${sender === 'RilenBot' ? 'bot' : 'user'}`;
+			div.innerHTML = text;
+			chatMessages.appendChild(div);
+			chatMessages.scrollTop = chatMessages.scrollHeight;
+		}
+
+		chatSend.addEventListener('click', async () => {
+			const text = chatInput.value.trim();
+			if (text) {
+				appendMessage('Você', text);
+				chatInput.value = '';
+
+				// CONEXÃO COM O RILENBOT REAL (Cloudflare Worker + Google Gemini)
+				try {
+					const workerUrl = "https://rilen-bot-api.rilen-lima.workers.dev"; // ⚠️ Substitua pela sua URL real
+
+					if (workerUrl && !workerUrl.includes("SUA_URL_DO_WORKER")) {
+						const response = await fetch(workerUrl, {
+							method: "POST",
+							headers: { "Content-Type": "application/json" },
+							body: JSON.stringify({ question: text })
+						});
+
+						if (!response.ok) throw new Error("Worker responded with error");
+
+						const data = await response.json();
+						appendMessage('RilenBot', data.reply);
+						return;
+					}
+				} catch (err) {
+					console.error("Erro no Worker, usando Fallback:", err);
+				}
+
+				// Mocked Edge RAG response (Fallback/Demo)
+				setTimeout(() => {
+					let response = "Interessante! Como especialista em IA e Infra, o Rilen foca muito nesse ponto. ";
+					if (text.toLowerCase().includes('ostras')) {
+						response = "O Preve-Ostras é um dos meus orgulhos. Usa D3.js e React 19 para monitorar marés e chuvas em tempo real em Rio das Ostras.";
+					} else if (text.toLowerCase().includes('deep')) {
+						response = "O 'Deep Work nativo' do Rilen vem da sua concentração absoluta, potencializada pelo implante coclear. É o silêncio que gera precisão.";
+					} else if (text.toLowerCase().includes('segurança') || text.toLowerCase().includes('security')) {
+						response = "Segurança é a base. O Rilen aplica hardening sênior e GRC em todos os deploys, garantindo que o código nasça seguro.";
+					} else {
+						response += "Para detalhes técnicos profundos, recomendo conferir o LinkedIn ou me perguntar sobre projetos específicos!";
+					}
+					appendMessage('RilenBot', response);
+				}, 600);
+			}
+		});
+
+		chatInput.addEventListener('keydown', (e) => {
+			if (e.key === ' ') {
+				e.stopPropagation();
+			}
+			if (e.key === 'Enter') {
+				e.preventDefault();
+				chatSend.click();
+			}
+		});
+
+		// D3.js GitHub Activity Pulse
+		async function initGithubPulse() {
+			try {
+				const response = await fetch('https://api.github.com/users/rilen/events/public');
+				const events = await response.json();
+
+				// Process events: last 14 days
+				const now = new Date();
+				const dates = d3.timeDays(d3.timeDay.offset(now, -14), d3.timeDay.offset(now, 1));
+				const counts = new Map(dates.map(d => [d.toISOString().slice(0, 10), 0]));
+
+				events.forEach(e => {
+					const date = e.created_at.slice(0, 10);
+					if (counts.has(date)) {
+						counts.set(date, (counts.get(date) || 0) + 1);
+					}
+				});
+
+				const data = dates.map(d => ({
+					date: d,
+					count: counts.get(d.toISOString().slice(0, 10))
+				}));
+
+				const container = d3.select("#githubPulse");
+				const width = container.node().getBoundingClientRect().width;
+				const height = 80;
+				const margin = { top: 5, right: 5, bottom: 5, left: 5 };
+
+				const svg = container.append("svg")
+					.attr("width", "100%")
+					.attr("height", height)
+					.attr("viewBox", `0 0 ${width} ${height}`);
+
+				const x = d3.scaleTime()
+					.domain(d3.extent(data, d => d.date))
+					.range([margin.left, width - margin.right]);
+
+				const y = d3.scaleLinear()
+					.domain([0, d3.max(data, d => d.count) || 5])
+					.range([height - margin.bottom, margin.top]);
+
+				// Gradient
+				const gradient = svg.append("defs")
+					.append("linearGradient")
+					.attr("id", "pulse-gradient")
+					.attr("x1", "0%").attr("y1", "0%")
+					.attr("x2", "0%").attr("y2", "100%");
+				gradient.append("stop").attr("offset", "0%").attr("stop-color", "#e37b7c");
+				gradient.append("stop").attr("offset", "100%").attr("stop-color", "rgba(114, 97, 147, 0)");
+
+				const area = d3.area()
+					.x(d => x(d.date))
+					.y0(height - margin.bottom)
+					.y1(d => y(d.count))
+					.curve(d3.curveMonotoneX);
+
+				const line = d3.line()
+					.x(d => x(d.date))
+					.y(d => y(d.count))
+					.curve(d3.curveMonotoneX);
+
+				svg.append("path")
+					.datum(data)
+					.attr("fill", "url(#pulse-gradient)")
+					.attr("d", area);
+
+				svg.append("path")
+					.datum(data)
+					.attr("fill", "none")
+					.attr("stroke", "#ffe4b4")
+					.attr("stroke-width", 1.5)
+					.attr("d", line);
+
+				// Dots for active days
+				svg.selectAll("circle")
+					.data(data.filter(d => d.count > 0))
+					.enter().append("circle")
+					.attr("cx", d => x(d.date))
+					.attr("cy", d => y(d.count))
+					.attr("r", 2)
+					.attr("fill", "#ffe4b4");
+
+			} catch (err) {
+				console.error("Error loading GitHub activity:", err);
+				d3.select("#githubPulse").text("Offline");
+			}
+		}
+
+		window.addEventListener('load', initGithubPulse);
+	</script>
+</body>
+
+</html>
