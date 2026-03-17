@@ -3844,8 +3844,12 @@ button:disabled,
 @media screen and (orientation: portrait) {
 
 	#page-wrapper {
-		padding-left: 2rem;
-		padding-right: 2rem;
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	#wrapper {
+		width: 100%;
 	}
 
 }
@@ -3870,7 +3874,7 @@ button:disabled,
 
 	#page-wrapper {
 		height: auto;
-		padding: 1rem;
+		padding: 1rem 0;
 	}
 
 }
@@ -3985,6 +3989,7 @@ body.is-preload #wrapper {
 		-ms-flex-direction: column;
 		flex-direction: column;
 		height: auto;
+		width: 100%;
 		margin: 0 0 5rem 0;
 		box-shadow: 0 0.25rem 1.5rem 0.25rem rgba(46, 43, 55, 0.5);
 	}
