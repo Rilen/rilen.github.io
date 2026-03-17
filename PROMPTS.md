@@ -1,4 +1,3 @@
-```markdown
 
 # **🛸 DESENVOLVIMENTO ANTIGRAVITY: BIBLIOTECA DE PROMPTS**
 
@@ -98,4 +97,3 @@
 
 "Refatore o código utilizando **Design Patterns** (Factory, Strategy, Singleton, etc). **Restrições:** Remova números mágicos, use verbos descritivos, funções \< 20 linhas e inclua JSDoc/Docstrings."
 
-```
