@@ -20,7 +20,7 @@ async function loadLatestRepositories() {
 
     try {
         const res = await fetch(
-            'https://api.github.com/users/Rilen/repos?sort=updated&per_page=9&type=public'
+            'https://api.github.com/users/Rilen/repos?sort=updated&per_page=6&type=public'
         );
         if (!res.ok) throw new Error(`GitHub API: ${res.status}`);
 
