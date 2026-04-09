@@ -32,10 +32,10 @@
 /* ── Repo Cards Grid ──────────────────────────────────────── */
 .repos-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-	gap: 1rem;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 0.75rem;
 	width: 100%;
-	margin-bottom: 1.5rem;
+	align-content: start;
 }
 
 .repos-loading,
@@ -58,18 +58,18 @@
 .repo-card {
 	display: flex;
 	flex-direction: column;
-	background: rgba(255, 255, 255, 0.06);
-	border: 1px solid rgba(255, 255, 255, 0.12);
-	border-radius: 0.85rem;
-	padding: 1.1rem 1.2rem;
+	background: rgba(255, 255, 255, 0.07);
+	border: 1px solid rgba(255, 255, 255, 0.13);
+	border-radius: 0.7rem;
+	padding: 0.75rem 0.9rem;
 	text-decoration: none !important;
 	color: inherit;
-	transition: transform 0.25s ease, border-color 0.25s ease,
-	            box-shadow 0.25s ease, background 0.25s ease;
-	animation: repoCardIn 0.45s ease both;
+	transition: transform 0.22s ease, border-color 0.22s ease,
+	            box-shadow 0.22s ease, background 0.22s ease;
+	animation: repoCardIn 0.4s ease both;
 	position: relative;
 	overflow: hidden;
-	min-height: 140px;
+	min-height: 100px;
 }
 
 .repo-card::before {
@@ -125,11 +125,11 @@
 }
 
 .repo-card-description {
-	font-size: 0.8rem;
+	font-size: 0.75rem;
 	opacity: 0.72;
-	line-height: 1.45;
+	line-height: 1.4;
 	flex: 1;
-	margin: 0 0 0.75rem;
+	margin: 0 0 0.5rem;
 }
 
 .repo-card-footer {
@@ -163,14 +163,9 @@
 }
 
 .repo-date {
-	font-size: 0.7rem;
+	font-size: 0.68rem;
 	opacity: 0.55;
 	white-space: nowrap;
-}
-
-.repos-cta {
-	text-align: center;
-	margin-top: 0.75rem;
 }
 
 /* ── GitHub Activity Feed Widget ──────────────────────────── */
