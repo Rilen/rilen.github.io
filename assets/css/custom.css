@@ -315,7 +315,9 @@
 	display: none;
 	flex-direction: column;
 	width: 350px;
-	height: 500px;
+	/* Nunca ultrapassar a viewport — sem scroll externo */
+	height: min(500px, 85vh);
+	max-height: 85vh;
 	background: #242943;
 	border: 2px solid #4e54c8;
 	border-radius: 10px;
@@ -440,10 +442,11 @@ body.high-contrast strong { color: #ffff00 !important; }
 	}
 
 	#chat-container {
-		width: 90vw;
-		height: 70vh;
-		right: 5vw;
-		bottom: 6rem;
+		width: 92vw;
+		height: min(480px, 80vh);
+		max-height: 80vh;
+		right: 4vw;
+		bottom: 5rem;
 	}
 
 	.a11y-bar {
@@ -455,5 +458,21 @@ body.high-contrast strong { color: #ffff00 !important; }
 		width: 2rem;
 		height: 2rem;
 		font-size: 1rem;
+	}
+}
+
+/* Modo paisagem (landscape) em telas pequenas — evita scroll vertical */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+	#chat-container {
+		height: min(340px, 90vh);
+		max-height: 90vh;
+		bottom: 4.5rem;
+		width: min(350px, 60vw);
+	}
+	#chat-messages {
+		/* Mensagens scrollam internamente, sem afetar a página */
+		flex: 1;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
 	}
 }

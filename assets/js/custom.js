@@ -2,6 +2,21 @@
 //  custom.js — Rilen Portfolio Dynamic Features
 // ============================================================
 
+// ============================================================
+//  0. EMAIL (EmailJS)
+// ============================================================
+window.sendEmail = function (event) {
+    event.preventDefault();
+    emailjs.sendForm('service_na1fzjo', 'template_706q96k', '#contact-form')
+        .then(function () {
+            alert('Mensagem enviada com sucesso! Retornarei em breve.');
+            document.getElementById('contact-form').reset();
+        }, function (error) {
+            alert('Erro no envio. Por favor, conecte-se pelo LinkedIn.');
+        });
+    return false;
+};
+
 // ─── Language color map ──────────────────────────────────────
 const LANG_COLORS = {
     Python: '#3572A5', TypeScript: '#2b7489', JavaScript: '#f1e05a',
@@ -193,12 +208,150 @@ function restoreAccessibilityPrefs() {
 }
 
 // ============================================================
-//  4. BOOTSTRAP
+//  4. CHAT BOT NELIR
+// ============================================================
+function initNelirChat() {
+    const trigger      = document.getElementById('rilenbot-trigger');
+    const container    = document.getElementById('chat-container');
+    const chatInput    = document.getElementById('chat-input');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatSend     = document.getElementById('chat-send');
+
+    if (!trigger || !container) return;
+
+    // Toggle ao clicar no avatar
+    trigger.addEventListener('click', () => {
+        const isVisible = container.style.display === 'flex';
+        container.style.display = isVisible ? 'none' : 'flex';
+        if (!isVisible && chatInput) setTimeout(() => chatInput.focus(), 100);
+    });
+
+    if (!chatSend || !chatInput) return;
+
+    // Envio de mensagem
+    chatSend.addEventListener('click', async () => {
+        const text = chatInput.value.trim();
+        if (!text) return;
+        appendMsg('user', text);
+        chatInput.value = '';
+
+        // Indicador de digitação
+        const typingId = 'typing-' + Date.now();
+        appendMsg('bot', '<i class="fas fa-ellipsis-h"></i>', typingId);
+
+        try {
+            const workerUrl = 'https://rilen-bot-api.rilen-lima.workers.dev';
+            const response = await fetch(workerUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question: text })
+            });
+            if (!response.ok) throw new Error('Worker error');
+            const data = await response.json();
+            removeMsg(typingId);
+            appendMsg('bot', data.reply);
+        } catch (err) {
+            console.warn('Fallback local ativado:', err);
+            removeMsg(typingId);
+            const t = text.toLowerCase();
+            let reply = 'Interessante! Como especialista em IA e Infra, o Rilen foca muito nesse ponto. Para mais detalhes, confira o LinkedIn ou pergunte sobre um projeto específico!';
+            if (t.includes('ostras'))   reply = 'O Preve-Ostras monitora marés e chuvas em tempo real em Rio das Ostras usando D3.js e Firebase.';
+            else if (t.includes('deep')) reply = 'O Deep Work nativo do Rilen vem da concentração absoluta potencializada pelo implante coclear. Silêncio = precisão.';
+            else if (t.includes('segurança') || t.includes('security')) reply = 'Segurança é a base. Rilen aplica hardening sênior e GRC em todos os deploys.';
+            else if (t.includes('dados') || t.includes('data')) reply = 'Trabalho com Big Data desde Spark/Databricks até pipelines Python Polars, sempre com observabilidade.';
+            appendMsg('bot', reply);
+        }
+    });
+
+    // Enter para enviar, Space não deve sair do campo
+    chatInput.addEventListener('keydown', (e) => {
+        if (e.key === ' ')     e.stopPropagation();
+        if (e.key === 'Enter') { e.preventDefault(); chatSend.click(); }
+    });
+
+    function appendMsg(type, html, id) {
+        const div = document.createElement('div');
+        div.className = `message ${type === 'bot' ? 'bot' : 'user'}`;
+        if (id) div.id = id;
+        div.innerHTML = html;
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function removeMsg(id) {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+    }
+
+    // Perguntas rápidas (sugestões)
+    window.sendQuickQuestion = function (text) {
+        chatInput.value = text;
+        chatSend.click();
+        const suggestions = document.getElementById('chat-suggestions');
+        if (suggestions) suggestions.style.display = 'none';
+    };
+}
+
+// ============================================================
+//  5. D3 GITHUB ACTIVITY PULSE
+// ============================================================
+async function initGithubPulse() {
+    const pulseContainer = document.getElementById('githubPulse');
+    if (!pulseContainer) return;
+
+    try {
+        const response = await fetch('https://api.github.com/users/rilen/events/public');
+        const events = await response.json();
+
+        const now   = new Date();
+        const dates = d3.timeDays(d3.timeDay.offset(now, -14), d3.timeDay.offset(now, 1));
+        const counts = new Map(dates.map(d => [d.toISOString().slice(0, 10), 0]));
+
+        events.forEach(e => {
+            const date = e.created_at.slice(0, 10);
+            if (counts.has(date)) counts.set(date, (counts.get(date) || 0) + 1);
+        });
+
+        const data = dates.map(d => ({ date: d, count: counts.get(d.toISOString().slice(0, 10)) }));
+        const container = d3.select('#githubPulse');
+        const width = container.node().getBoundingClientRect().width || 300;
+        const height = 80;
+        const margin = { top: 5, right: 5, bottom: 5, left: 5 };
+
+        const svg = container.append('svg')
+            .attr('width', '100%').attr('height', height)
+            .attr('viewBox', `0 0 ${width} ${height}`);
+
+        const x = d3.scaleTime().domain(d3.extent(data, d => d.date)).range([margin.left, width - margin.right]);
+        const y = d3.scaleLinear().domain([0, d3.max(data, d => d.count) || 5]).range([height - margin.bottom, margin.top]);
+
+        const grad = svg.append('defs').append('linearGradient')
+            .attr('id', 'pulse-gradient').attr('x1', '0%').attr('y1', '0%').attr('x2', '0%').attr('y2', '100%');
+        grad.append('stop').attr('offset', '0%').attr('stop-color', '#e37b7c');
+        grad.append('stop').attr('offset', '100%').attr('stop-color', 'rgba(114,97,147,0)');
+
+        const area = d3.area().x(d => x(d.date)).y0(height - margin.bottom).y1(d => y(d.count)).curve(d3.curveMonotoneX);
+        const line = d3.line().x(d => x(d.date)).y(d => y(d.count)).curve(d3.curveMonotoneX);
+
+        svg.append('path').datum(data).attr('fill', 'url(#pulse-gradient)').attr('d', area);
+        svg.append('path').datum(data).attr('fill', 'none').attr('stroke', '#ffe4b4').attr('stroke-width', 1.5).attr('d', line);
+        svg.selectAll('circle').data(data.filter(d => d.count > 0)).enter().append('circle')
+            .attr('cx', d => x(d.date)).attr('cy', d => y(d.count)).attr('r', 2).attr('fill', '#ffe4b4');
+
+    } catch (err) {
+        console.error('Error loading GitHub activity:', err);
+        d3.select('#githubPulse').text('Offline');
+    }
+}
+
+// ============================================================
+//  6. BOOTSTRAP
 // ============================================================
 function init() {
     restoreAccessibilityPrefs();
     loadLatestRepositories();
     loadRecentActivity();
+    initNelirChat();
 }
 
 if (document.readyState === 'loading') {
@@ -206,3 +359,5 @@ if (document.readyState === 'loading') {
 } else {
     init();
 }
+
+window.addEventListener('load', initGithubPulse);
