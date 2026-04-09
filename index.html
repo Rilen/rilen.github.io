@@ -255,6 +255,35 @@
 				</div>
 			</section>
 
+			<!-- NOVOS PROJETOS -->
+			<section class="panel color3" id="latest-projects">
+				<div class="intro color3">
+					<h2 class="major">Projetos Recentes</h2>
+					<p>Os últimos repositórios publicados. Exploração contínua em Data Science, IA e Infraestrutura.</p>
+					<div class="github-stats-wrapper">
+						<img
+							src="https://github-readme-stats.vercel.app/api?username=Rilen&show_icons=true&theme=tokyonight&hide_border=true&bg_color=00000000&title_color=ffe4b4&icon_color=ffe4b4&text_color=ffffff"
+							alt="GitHub Stats de Rilen"
+							class="github-stats-img"
+							loading="lazy"
+						/>
+					</div>
+				</div>
+				<div class="inner">
+					<div id="latest-repos-container" class="repos-grid">
+						<!-- Carregado dinamicamente via JavaScript -->
+						<div class="repos-loading">
+							<i class="fas fa-spinner fa-spin"></i> Carregando repositórios...
+						</div>
+					</div>
+					<div class="repos-cta">
+						<a href="https://github.com/Rilen?tab=repositories&sort=updated" target="_blank" rel="noopener noreferrer" class="button primary icon brands fa-github">
+							Ver Todos os Repositórios
+						</a>
+					</div>
+				</div>
+			</section>
+
 			<!-- STACK -->
 			<section class="panel color5-alt" id="stack">
 				<div class="intro color5">
@@ -394,11 +423,22 @@
 							<li class="icon solid fa-map-marker-alt"><span aria-label="Localização">Rio das Ostras · RJ
 									· Brasil</span></li>
 						</ul>
+						<!-- GitHub Activity Feed -->
+						<div id="github-feed" class="github-feed-widget">
+							<div class="github-feed-header">
+								<i class="icon brands fa-github"></i>
+								<strong>Atividade Recente</strong>
+							</div>
+							<div id="recent-activity" class="github-feed-list">
+								<span class="feed-loading"><i class="fas fa-spinner fa-spin"></i> Carregando...</span>
+							</div>
+						</div>
+						<!-- D3 Activity Sparkline -->
 						<div id="github-activity"
-							style="display: block; height: 140px; text-align: left; padding: 10px;">
+							style="display: block; height: 120px; text-align: left; padding: 10px; margin-top: 0.5rem;">
 							<span
 								style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; color: #ffe4b4;">
-								<i class="icon solid fa-pulse fa-heartbeat" style="margin-right: 5px;"></i> Activity
+								<i class="icon solid fa-heartbeat" style="margin-right: 5px;"></i> Activity
 								Pulse (14d)
 							</span>
 							<div id="githubPulse" style="width: 100%; height: 100%;"></div>

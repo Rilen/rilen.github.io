@@ -1,6 +1,8 @@
-/* Estilos Personalizados do Portfólio */
+/* ============================================================
+   Estilos Personalizados do Portfólio — Rilen
+   ============================================================ */
 
-/* Estilos da Stack */
+/* ── Stack badges ─────────────────────────────────────────── */
 #stack .table-wrapper table img {
 	margin: 0.2rem;
 	vertical-align: middle;
@@ -12,15 +14,244 @@
 	filter: brightness(1.2);
 }
 
-#stack table td {
-	vertical-align: middle;
+#stack table td { vertical-align: middle; }
+#stack table strong { color: #ffe4b4; }
+
+/* ── GitHub Stats (seção latest-projects) ─────────────────── */
+.github-stats-wrapper {
+	margin-top: 1.25rem;
+	display: flex;
+	justify-content: center;
+}
+.github-stats-img {
+	max-width: 100%;
+	border-radius: 0.75rem;
+	filter: drop-shadow(0 4px 16px rgba(0,0,0,0.4));
 }
 
-#stack table strong {
+/* ── Repo Cards Grid ──────────────────────────────────────── */
+.repos-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: 1rem;
+	width: 100%;
+	margin-bottom: 1.5rem;
+}
+
+.repos-loading,
+.repos-empty,
+.repos-error {
+	grid-column: 1 / -1;
+	text-align: center;
+	padding: 2.5rem 1rem;
+	color: #ffe4b4;
+	opacity: 0.75;
+	font-size: 0.9rem;
+}
+.repos-error a { color: #ffe4b4; text-decoration: underline; }
+
+@keyframes repoCardIn {
+	from { opacity: 0; transform: translateY(18px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
+.repo-card {
+	display: flex;
+	flex-direction: column;
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 0.85rem;
+	padding: 1.1rem 1.2rem;
+	text-decoration: none !important;
+	color: inherit;
+	transition: transform 0.25s ease, border-color 0.25s ease,
+	            box-shadow 0.25s ease, background 0.25s ease;
+	animation: repoCardIn 0.45s ease both;
+	position: relative;
+	overflow: hidden;
+	min-height: 140px;
+}
+
+.repo-card::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(135deg,
+		rgba(102, 126, 234, 0.12) 0%,
+		rgba(118, 75, 162, 0.12) 100%
+	);
+	opacity: 0;
+	transition: opacity 0.25s ease;
+	border-radius: inherit;
+}
+
+.repo-card:hover {
+	transform: translateY(-4px);
+	border-color: rgba(255, 228, 180, 0.35);
+	box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+	background: rgba(255, 255, 255, 0.09);
+	color: inherit;
+}
+.repo-card:hover::before { opacity: 1; }
+
+/* Card internals */
+.repo-card-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 0.5rem;
+	margin-bottom: 0.5rem;
+}
+
+.repo-card-name {
+	font-weight: 700;
+	font-size: 0.9rem;
+	color: #ffe4b4;
+	word-break: break-word;
+	line-height: 1.3;
+}
+.repo-card-name .icon { margin-right: 0.4rem; opacity: 0.7; }
+
+.repo-card-badge {
+	flex-shrink: 0;
+	background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+	color: white;
+	font-size: 0.65rem;
+	font-weight: 700;
+	padding: 2px 8px;
+	border-radius: 20px;
+	white-space: nowrap;
+	letter-spacing: 0.02em;
+}
+
+.repo-card-description {
+	font-size: 0.8rem;
+	opacity: 0.72;
+	line-height: 1.45;
+	flex: 1;
+	margin: 0 0 0.75rem;
+}
+
+.repo-card-footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 0.5rem;
+	margin-top: auto;
+}
+
+.repo-stats {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 0.75rem;
+	flex-wrap: wrap;
+}
+
+.repo-lang-dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	display: inline-block;
+	flex-shrink: 0;
+}
+.repo-lang-label { opacity: 0.8; }
+
+.repo-stat {
+	opacity: 0.75;
+	white-space: nowrap;
+}
+
+.repo-date {
+	font-size: 0.7rem;
+	opacity: 0.55;
+	white-space: nowrap;
+}
+
+.repos-cta {
+	text-align: center;
+	margin-top: 0.75rem;
+}
+
+/* ── GitHub Activity Feed Widget ──────────────────────────── */
+.github-feed-widget {
+	margin-top: 1rem;
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 0.75rem;
+	overflow: hidden;
+}
+
+.github-feed-header {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.6rem 0.9rem;
+	background: rgba(0, 0, 0, 0.15);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	font-size: 0.75rem;
+	text-transform: uppercase;
+	letter-spacing: 0.07em;
 	color: #ffe4b4;
 }
+.github-feed-header .icon { opacity: 0.75; }
 
-/* Barra de Acessibilidade */
+.github-feed-list {
+	display: flex;
+	flex-direction: column;
+}
+
+.feed-item {
+	display: flex;
+	align-items: center;
+	gap: 0.55rem;
+	padding: 0.55rem 0.9rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+	font-size: 0.78rem;
+	text-decoration: none !important;
+	color: inherit;
+	transition: background 0.2s ease;
+}
+.feed-item:last-child { border-bottom: none; }
+.feed-item:hover { background: rgba(255, 255, 255, 0.06); }
+
+.feed-icon {
+	flex-shrink: 0;
+	color: #ffe4b4;
+	opacity: 0.7;
+	width: 14px;
+	text-align: center;
+}
+.feed-text { flex: 1; min-width: 0; }
+.feed-text strong { color: #ffe4b4; }
+.feed-repo {
+	font-style: italic;
+	opacity: 0.85;
+}
+.feed-date {
+	flex-shrink: 0;
+	opacity: 0.45;
+	font-size: 0.7rem;
+}
+.feed-loading,
+.feed-empty {
+	padding: 0.75rem 0.9rem;
+	font-size: 0.78rem;
+	opacity: 0.6;
+}
+
+/* ── D3 sparkline area ───────────────────────────────────── */
+#github-activity {
+	width: 100%;
+	height: 120px;
+	margin-top: 0.5rem;
+	background: rgba(255, 255, 255, 0.04);
+	border-radius: 0.5rem;
+	font-size: 0.7rem;
+	opacity: 0.85;
+}
+
+/* ── Barra de Acessibilidade ─────────────────────────────── */
 .a11y-bar {
 	position: fixed;
 	top: 50%;
@@ -55,14 +286,13 @@
 	line-height: normal;
 	box-shadow: none;
 }
-
 .a11y-bar button:hover {
 	background: #ffe4b4;
 	color: #2e2b37;
 	transform: scale(1.1);
 }
 
-/* RilenBot Widget & Styles */
+/* ── RilenBot Widget ─────────────────────────────────────── */
 #chat-widget {
 	position: fixed;
 	bottom: 2rem;
@@ -84,10 +314,7 @@
 	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 	transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
-#rilenbot-trigger:hover {
-	transform: scale(1.1) rotate(5deg);
-}
+#rilenbot-trigger:hover { transform: scale(1.1) rotate(5deg); }
 
 #chat-container {
 	display: none;
@@ -113,23 +340,13 @@
 	justify-content: space-between;
 	align-items: center;
 }
-
-#chat-header .bot-info {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-}
-
+#chat-header .bot-info { display: flex; align-items: center; gap: 0.5rem; }
 #chat-header .bot-info img {
-	width: 2rem;
-	height: 2rem;
+	width: 2rem; height: 2rem;
 	border-radius: 50%;
 	border: 1px solid #4e54c8;
 }
-
-#chat-header strong {
-	color: #ffe4b4;
-}
+#chat-header strong { color: #ffe4b4; }
 
 #chat-messages {
 	flex: 1;
@@ -146,18 +363,14 @@
 	line-height: 1.4;
 	max-width: 85%;
 }
-
 .message.bot {
 	background: rgba(78, 84, 200, 0.2);
 	border-left: 3px solid #4e54c8;
 	color: #fff;
-	align-self: flex-start;
 }
-
 .message.user {
 	background: rgba(255, 255, 255, 0.05);
 	text-align: right;
-	align-self: flex-end;
 	margin-left: auto;
 }
 
@@ -167,7 +380,6 @@
 	flex-wrap: wrap;
 	gap: 5px;
 }
-
 .suggestion-btn {
 	background: rgba(78, 84, 200, 0.1);
 	border: 1px solid #4e54c8;
@@ -179,7 +391,6 @@
 	transition: all 0.2s ease;
 	font-family: inherit;
 }
-
 .suggestion-btn:hover {
 	background: #4e54c8;
 	color: white;
@@ -194,7 +405,6 @@
 	align-items: center;
 	border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
-
 #chat-input {
 	flex: 1;
 	background: #1d213b !important;
@@ -204,7 +414,6 @@
 	padding: 0 0.75rem !important;
 	margin: 0 !important;
 }
-
 #chat-send {
 	padding: 0 1rem !important;
 	min-width: auto;
@@ -215,36 +424,26 @@
 	margin: 0 !important;
 }
 
-/* High Contrast Mode */
-body.high-contrast {
-	filter: contrast(1.2) brightness(1.1);
-}
-
+/* ── High Contrast Mode ──────────────────────────────────── */
+body.high-contrast { filter: contrast(1.2) brightness(1.1); }
 body.high-contrast section.panel {
 	background-image: none !important;
 	background-color: #000 !important;
 }
+body.high-contrast strong { color: #ffff00 !important; }
 
-body.high-contrast strong {
-	color: #ffff00 !important;
+/* ── Mobile ──────────────────────────────────────────────── */
+@media screen and (max-width: 736px) {
+	.repos-grid {
+		grid-template-columns: 1fr 1fr;
+	}
 }
 
-/* D3 activity mock */
-#github-activity {
-	width: 100%;
-	height: 120px;
-	margin-top: 1rem;
-	background: rgba(255, 255, 255, 0.05);
-	border-radius: 0.5rem;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 0.7rem;
-	opacity: 0.8;
-}
-
-/* Mobile Adjustments */
 @media screen and (max-width: 480px) {
+	.repos-grid {
+		grid-template-columns: 1fr;
+	}
+
 	#chat-container {
 		width: 90vw;
 		height: 70vh;
@@ -257,7 +456,6 @@ body.high-contrast strong {
 		gap: 0.5rem;
 		padding: 0.5rem;
 	}
-
 	.a11y-bar button {
 		width: 2rem;
 		height: 2rem;
