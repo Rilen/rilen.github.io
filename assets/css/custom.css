@@ -17,6 +17,24 @@
 #stack table td { vertical-align: middle; }
 #stack table strong { color: #ffe4b4; }
 
+/* ── Seção Sobre (#first) — evitar scroll vertical ────────── */
+/* Ícones menores e mais compactos */
+#first .inner .grid-icons.three li .icon {
+	font-size: 1.6rem;
+}
+#first .inner .grid-icons.three + .grid-icons.three {
+	margin-top: 0.25em !important;
+}
+/* Título mais compacto */
+#first .inner > h3.major {
+	margin-bottom: 0.5em;
+}
+/* Parágrafo intro mais compacto */
+#first .intro p {
+	font-size: 0.88em;
+	line-height: 1.5;
+}
+
 /* ── GitHub Stats (seção latest-projects) ─────────────────── */
 .github-stats-wrapper {
 	margin-top: 1.25rem;
