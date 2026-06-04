@@ -9,7 +9,17 @@ export default {
     if (request.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
     try {
-      const { question } = await request.json();
+      const requestBody = await request.json();
+      const question = requestBody?.question?.trim();
+      const apiKey = env.GEMINI_API_KEY;
+
+      if (!apiKey) {
+        throw new Error('Chave GEMINI_API_KEY não configurada');
+      }
+
+      if (!question) {
+        throw new Error('Pergunta inválida ou vazia');
+      }
       
       const systemInstruction = `Seu nome é Nelir (Rilen ao contrário). Você é o assistente virtual do Rilen Tavares Lima.
       
@@ -36,7 +46,7 @@ export default {
       - Seja técnico, sênior e direto. Use termos como 'Soberania de Dados', 'Resiliência Digital' e 'Arquitetura Medallion'.
       - Para contato: rilen.lima@gmail.com | Portfolio: rilen.github.io/portfolio | LinkedIn: in/rilen.`;
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${env.GEMINI_API_KEY}`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -49,11 +59,14 @@ export default {
 
       const data = await response.json();
       
-      if (data.error) {
-        throw new Error(data.error.message || "Erro no Gemini");
+      if (!response.ok) {
+        throw new Error(data?.error?.message || `Erro Gemini ${response.status}`);
       }
 
-      const botReply = data.candidates[0].content.parts[0].text;
+      const botReply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!botReply) {
+        throw new Error('Resposta inesperada do Gemini');
+      }
 
       return new Response(JSON.stringify({ reply: botReply }), { headers: corsHeaders });
 

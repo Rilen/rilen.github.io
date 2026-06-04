@@ -100,7 +100,7 @@ async function loadLatestRepositories() {
         const container = document.getElementById('latest-repos-container');
         if (container) container.innerHTML =
             '<p class="repos-error"><i class="fas fa-exclamation-circle"></i> ' +
-            'Erro ao carregar repositórios. <a href="https://github.com/Rilen" target="_blank">Ver no GitHub →</a></p>';
+            'Erro ao carregar repositórios. <a href="https://github.com/Rilen" target="_blank" rel="noopener noreferrer">Ver no GitHub →</a></p>';
     }
 }
 
@@ -237,7 +237,7 @@ function initNelirChat() {
 
         // Indicador de digitação
         const typingId = 'typing-' + Date.now();
-        appendMsg('bot', '<i class="fas fa-ellipsis-h"></i>', typingId);
+        appendMsg('bot', '<i class="fas fa-ellipsis-h"></i>', typingId, true);
 
         try {
             const workerUrl = 'https://rilen-bot-api.rilen-lima.workers.dev';
@@ -269,11 +269,15 @@ function initNelirChat() {
         if (e.key === 'Enter') { e.preventDefault(); chatSend.click(); }
     });
 
-    function appendMsg(type, html, id) {
+    function appendMsg(type, message, id, useHtml = false) {
         const div = document.createElement('div');
         div.className = `message ${type === 'bot' ? 'bot' : 'user'}`;
         if (id) div.id = id;
-        div.innerHTML = html;
+        if (useHtml) {
+            div.innerHTML = message;
+        } else {
+            div.textContent = message;
+        }
         chatMessages.appendChild(div);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
