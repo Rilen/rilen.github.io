@@ -18,6 +18,9 @@ index - Copia.html
 index - Copia (2).html
 index_15022026.html
 
+# Pasta de backup manual (redundante com o histórico git)
+.backup/
+
 # Logs e arquivos temporários
 *.log
 test_query.json

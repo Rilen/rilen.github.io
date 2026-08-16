@@ -18,7 +18,9 @@
 > - ✅ A `GEMINI_API_KEY` é injetada via **Cloudflare Wrangler Secret** em tempo de deploy — nunca exposta no repositório
 > - ✅ O `wrangler.toml` não contém credenciais — apenas metadados de build
 > - ✅ O `.gitignore` e `.wranglerignore` estão devidamente configurados para bloquear `node_modules`, `.wrangler/` e artefatos de build
-> - ⚠️ **AÇÃO RECOMENDADA:** O arquivo `REAL_BOT_SETUP.md` contém, em um comentário de exemplo, o formato de uma chave Gemini. Embora seja apenas documentação, considere remover ou ofuscar esse trecho para eliminar qualquer ambiguidade em auditorias de segurança automatizadas (ex: GitHub Secret Scanning).
+> - ✅ O Worker implementa **rate limiting** (20 req/min por IP) e usa o campo nativo `systemInstruction` do Gemini
+> - ✅ A chave de exemplo do `REAL_BOT_SETUP.md` foi ofuscada para não disparar GitHub Secret Scanning
+> - ⚠️ **Ponto de atenção:** o `index.html` expõe a **Public Key** do EmailJS (necessária ao modelo client-side) junto com service/template ID — risco inerente ao serviço, mitigável com limites de envio no painel do EmailJS
 
 ---
 
