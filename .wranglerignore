@@ -30,3 +30,4 @@ LICENSE*
 # Backups
 index-*.html
 !index.html
+.backup/
