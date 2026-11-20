@@ -314,6 +314,15 @@
 							if (breakpoints.active('<=small'))
 								return;
 
+						var n = normalizeWheel(event.originalEvent),
+							summary = $(event.target).closest('.project-summary')[0];
+
+						// Let vertical scrolling reach enlarged text within the desktop panel.
+						if (summary && Math.abs(n.pixelY) > Math.abs(n.pixelX)
+							&& (n.pixelY < 0 ? summary.scrollTop > 0
+								: summary.scrollTop + summary.clientHeight < summary.scrollHeight - 1))
+							return;
+
 						// Prevent default.
 							event.preventDefault();
 							event.stopPropagation();
@@ -322,8 +331,7 @@
 							$bodyHtml.stop();
 
 						// Calculate delta, direction.
-							var	n = normalizeWheel(event.originalEvent),
-								x = (n.pixelX != 0 ? n.pixelX : n.pixelY),
+							var	x = (n.pixelX != 0 ? n.pixelX : n.pixelY),
 								delta = Math.min(Math.abs(x), 150) * settings.scrollWheel.factor,
 								direction = x > 0 ? 1 : -1;
 
