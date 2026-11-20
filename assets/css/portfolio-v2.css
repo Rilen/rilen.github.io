@@ -23,3 +23,14 @@
 .portrait-visual .tag-top{top:4px;right:0}.portrait-visual .tag-bottom{bottom:9px;left:0}
 @media(max-width:960px){.portrait-visual{min-height:360px}.portrait-frame{width:min(100%,355px)}}
 @media(max-width:700px){.portrait-visual{min-height:330px;padding:16px 0 22px}.portrait-frame{width:min(90%,320px);height:auto;aspect-ratio:4/5;border-radius:14px}.portrait-visual .visual-tag{font-size:8px}}
+
+/* Original photo in the original tilted-square visual, without zooming/cropping the source. */
+.hero-visual.portrait-visual{min-height:460px;display:grid;place-items:center;padding:0;isolation:isolate}
+.portrait-visual .visual-orbit{display:block;z-index:-1}
+.portrait-visual .portrait-frame{width:min(69%,285px);height:auto;aspect-ratio:1;border-radius:29px;overflow:hidden;background:#211e30;border:1px solid #665b7b;box-shadow:0 35px 95px #000a,inset 0 1px #ffffff22;transform:rotate(-9deg);display:grid;place-items:center;padding:12px}
+.portrait-visual .portrait-frame img{width:100%;height:100%;object-fit:contain;object-position:center;display:block;border-radius:18px;background:#171924;transform:rotate(9deg) scale(.85)}
+.portrait-visual .portrait-frame:after{display:none}
+.portrait-visual .visual-tag{background:transparent;border:0;padding:0;color:#b6aec5;font-size:10px;letter-spacing:.14em}
+.portrait-visual .tag-top{top:22px;right:0}.portrait-visual .tag-bottom{bottom:35px;left:0}
+@media(max-width:960px){.hero-visual.portrait-visual{min-height:340px}.portrait-visual .portrait-frame{width:min(65%,245px)}}
+@media(max-width:700px){.hero-visual.portrait-visual{min-height:310px}.portrait-visual .portrait-frame{width:min(65%,225px);border-radius:23px;padding:9px}.portrait-visual .portrait-frame img{border-radius:14px}.portrait-visual .visual-tag{font-size:8px}}
