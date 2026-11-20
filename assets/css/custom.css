@@ -494,3 +494,16 @@ body.high-contrast strong { color: #ffff00 !important; }
 		-webkit-overflow-scrolling: touch;
 	}
 }
+
+/* Keep enlarged project text reachable within Ethereal's desktop panel. */
+@media screen and (min-width: 737px) {
+	#projects > .project-summary {
+		align-items: flex-start;
+		min-height: 0;
+		overflow-y: auto;
+	}
+
+	#projects > .project-summary > :first-child {
+		margin-block: auto;
+	}
+}
