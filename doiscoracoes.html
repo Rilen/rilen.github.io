@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Estudo de caso DoisCorações: arquitetura full-stack, consistência transacional e prevenção de administração duplicada de medicamentos em aplicação veterinária.">
+  <meta name="theme-color" content="#695075">
+  <title>DoisCorações — Estudo de caso | Rilen T. L.</title>
+  <link rel="canonical" href="https://rilen.github.io/doiscoracoes.html">
+  <link rel="icon" type="image/png" href="images/favicon.png">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="DoisCorações — Arquitetura e engenharia de software">
+  <meta property="og:description" content="Estudo de caso técnico sobre integridade transacional, auditoria e gestão veterinária.">
+  <meta property="og:url" content="https://rilen.github.io/doiscoracoes.html">
+  <style>
+    :root { color-scheme: dark; font-family: "Source Sans Pro", "Segoe UI", Arial, sans-serif; }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; color:#fff; background:linear-gradient(125deg,#f1dfe2,#d9c7d9 45%,#b4a4c4); line-height:1.65; }
+    .wrap { max-width:1020px; margin:clamp(24px,7vw,88px) auto; padding:0 20px; }
+    .paper { overflow:hidden; background:linear-gradient(125deg,#a45b83 0%,#db8e88 43%,#74547e 100%); box-shadow:0 28px 70px rgba(44,28,55,.3); }
+    header { padding:clamp(28px,5vw,58px); background:rgba(37,19,51,.16); }
+    .back { display:inline-block; color:#fff; text-decoration:none; border-bottom:1px solid rgba(255,255,255,.6); margin-bottom:30px; }
+    .back:hover,.back:focus-visible { border-bottom-color:#fff; }
+    .eyebrow { letter-spacing:.16em; text-transform:uppercase; font-size:.8rem; opacity:.88; margin:0 0 12px; }
+    h1 { font-size:clamp(2.3rem,5vw,4rem); line-height:1.1; margin:0 0 16px; font-weight:650; }
+    .lead { font-size:clamp(1.05rem,2vw,1.35rem); max-width:780px; margin:0; }
+    main { padding:clamp(28px,5vw,58px); }
+    section + section { border-top:1px solid rgba(255,255,255,.32); padding-top:28px; margin-top:32px; }
+    h2 { font-size:clamp(1.35rem,2.4vw,1.8rem); line-height:1.25; margin:0 0 15px; }
+    p { margin:0 0 16px; }
+    ul { padding-left:1.4em; margin:0 0 16px; }
+    li + li { margin-top:6px; }
+    .video { width:100%; max-width:820px; aspect-ratio:16/9; background:#241e30; margin:22px 0; }
+    iframe { display:block; width:100%; height:100%; border:0; }
+    .button { display:inline-block; padding:11px 19px; color:#fff; border:1px solid rgba(255,255,255,.8); border-radius:4px; text-decoration:none; font-weight:600; }
+    .button:hover,.button:focus-visible { background:rgba(255,255,255,.16); }
+    .muted { opacity:.86; font-size:.95rem; }
+    footer { padding:20px clamp(28px,5vw,58px); background:rgba(31,15,43,.18); font-size:.9rem; }
+    a { color:#fff; }
+    :focus-visible { outline:3px solid #fff; outline-offset:4px; }
+    @media (max-width:600px) { .wrap { margin:0 auto; padding:0; } header,main { padding:28px 22px; } footer { padding:20px 22px; } }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; transition:none!important; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="paper">
+      <header>
+        <a class="back" href="./#projects" aria-label="Voltar à seção Projetos do portfólio">← Voltar ao portfólio</a>
+        <p class="eyebrow">Estudo de caso · Engenharia de software</p>
+        <h1>DoisCorações</h1>
+        <p class="lead">Arquitetura e desenvolvimento de uma aplicação de gestão veterinária para cliente privado.</p>
+      </header>
+      <main>
+        <section aria-labelledby="contexto">
+          <h2 id="contexto">Contexto e responsabilidade</h2>
+          <p>Desenvolvi o DoisCorações a partir de necessidades identificadas na rotina clínica e administrativa de um veterinário. Fui o único responsável pela arquitetura e pela implementação da aplicação. O veterinário colaborou com conhecimento do domínio e feedback sobre o uso na rotina de trabalho.</p>
+        </section>
+        <section aria-labelledby="decisao">
+          <h2 id="decisao">Decisão de engenharia: integridade na administração de medicamentos</h2>
+          <p>Um desafio importante foi preservar a integridade dos registros de administração de medicamentos: identificar quem administrou cada dose, registrar o horário da operação e impedir que solicitações concorrentes produzam confirmações duplicadas.</p>
+          <p>Implementei uma transição de estado condicional e atômica: somente doses pendentes podem ser confirmadas. Quando duas operações tentam confirmar a mesma dose, apenas uma pode ser efetivada.</p>
+          <p>A confirmação também mantém a rastreabilidade por meio de registros de auditoria e integra o controle de estoque. Testes automatizados verificam a rejeição de administrações duplicadas e a preservação dos registros associados.</p>
+        </section>
+        <section aria-labelledby="arquitetura">
+          <h2 id="arquitetura">Arquitetura e funcionalidades</h2>
+          <p>A solução utiliza Next.js, React e TypeScript, tRPC para comunicação tipada entre cliente e servidor, PostgreSQL e Prisma para persistência, além de autenticação, controle de acesso baseado em papéis (RBAC) e testes automatizados.</p>
+          <p>Entre as funcionalidades documentadas estão prontuários, internações, prescrições, administração de medicamentos, histórico clínico longitudinal e documentos clínicos. O cliente utiliza a aplicação e compartilha feedback para orientar sua evolução.</p>
+        </section>
+        <section aria-labelledby="demo">
+          <h2 id="demo">Demonstração em vídeo</h2>
+          <p>Apresentação autorizada da aplicação, sem divulgação de dados confidenciais.</p>
+          <div class="video">
+            <iframe src="https://www.youtube-nocookie.com/embed/R-wqylXD64g" title="Demonstração do DoisCorações" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+          <a class="button" href="https://youtu.be/R-wqylXD64g" target="_blank" rel="noopener noreferrer">Assistir no YouTube</a>
+        </section>
+        <section aria-labelledby="privacidade">
+          <h2 id="privacidade">Privacidade e escopo da divulgação</h2>
+          <p>O código-fonte é privado. Este estudo apresenta apenas decisões técnicas selecionadas, sem dados reais de pacientes, informações confidenciais ou métricas sem comprovação.</p>
+        </section>
+      </main>
+      <footer>Rilen T. L. · Arquitetura de Soluções e Engenharia de Software · <a href="./#projects">Voltar aos projetos</a></footer>
+    </div>
+  </div>
+</body>
+</html>
