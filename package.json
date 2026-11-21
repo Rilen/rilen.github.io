@@ -2,9 +2,12 @@
   "name": "rilen-portfolio",
   "version": "1.0.0",
   "scripts": {
-    "deploy": "wrangler deploy --assets . --name portfolio"
+    "deploy": "wrangler deploy --assets . --name portfolio",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
+    "vitest": "^3.2.7",
     "wrangler": "^4.71.0"
   }
 }
