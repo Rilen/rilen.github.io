@@ -14,7 +14,7 @@ function isRateLimited(ip) {
   return false;
 }
 
-import { normalize, matchKnowledge } from "./knowledge/matcher.js";
+import { normalize, tokenize, matchKnowledge } from "./knowledge/matcher.js";
 import knowledge from "./knowledge/nelir.pt-BR.json";
 
 const corsHeaders = {
@@ -24,6 +24,13 @@ const corsHeaders = {
   "Cache-Control": "no-store",
   "Content-Type": "application/json; charset=utf-8",
 };
+
+const MAX_QUESTION_LEN = 600;
+const ERROR_INVALID = "Pergunta invalida ou vazia";
+
+function jsonError(message, status) {
+  return new Response(JSON.stringify({ error: message }), { status, headers: corsHeaders });
+}
 
 // Termos que indicam que a pergunta e pertinente ao perfil publico do Rilen.
 const PERTINENT_KEYWORDS = [
@@ -61,8 +68,11 @@ const PERTINENT_KEYWORDS = [
 ];
 
 function isPertinent(question) {
-  const q = normalize(question);
-  return PERTINENT_KEYWORDS.some((k) => q.includes(k));
+  const qTokens = new Set(tokenize(question));
+  return PERTINENT_KEYWORDS.some((k) => {
+    const kt = tokenize(k);
+    return kt.length > 0 && kt.every((t) => qTokens.has(t));
+  });
 }
 
 function jsonReply(reply, status = 200) {
@@ -115,18 +125,26 @@ export default {
     }
 
     try {
-      const requestBody = await request.json();
-      const question = requestBody?.question?.trim();
+      let requestBody;
+      try {
+        requestBody = await request.json();
+      } catch {
+        return jsonError(ERROR_INVALID, 400);
+      }
 
-      if (!question) {
-        return new Response(
-          JSON.stringify({ error: "Pergunta inválida ou vazia" }),
-          { status: 400, headers: corsHeaders }
-        );
+      const question = requestBody?.question;
+
+      if (typeof question !== "string" || !question.trim()) {
+        return jsonError(ERROR_INVALID, 400);
+      }
+
+      const q = question.trim();
+      if (q.length > MAX_QUESTION_LEN) {
+        return jsonError(ERROR_INVALID, 400);
       }
 
       // 1. Tentar correspondência na base de conhecimento local (zero chamadas ao Gemini).
-      const match = matchKnowledge(question, knowledge);
+      const match = matchKnowledge(q, knowledge);
       if (match) {
         return jsonReply(match.entry.reply);
       }

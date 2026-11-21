@@ -36,15 +36,7 @@
         "stack do rilen",
         "hard skills do rilen",
         "tecnologias que o rilen domina",
-        "engenharia de dados",
-        "databricks",
-        "spark",
-        "delta lake",
-        "polars",
-        "cloudflare workers",
-        "localai",
-        "grafana",
-        "prometheus"
+        "engenharia de dados"
       ],
       "reply": "Hard skills do Rilen: Engenharia de Dados (Databricks, Apache Spark, Delta Lake, Polars, ETL/ELT), IA e ML (LLMs, RAG, NLP, redes neurais, fine-tuning, Random Forest, Meta Prophet), Desenvolvimento (Next.js 14, FastAPI, TypeScript, React 19, Python, R) e Infra/Ciberseguranca (Cloudflare Workers, Docker, LocalAI com LLMs em CPU AVX-512, hardening, GRC, observabilidade com Grafana e Prometheus)."
     },

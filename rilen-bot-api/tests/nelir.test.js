@@ -111,3 +111,120 @@ describe("worker - fora da base", () => {
     expect(res.status).toBe(400);
   });
 });
+
+describe("matcher - palavra inteira / expressao", () => {
+  it("ia nao corresponde dentro de melancia (somente palavra inteira)", () => {
+    expect(matchKnowledge("melancia", knowledge)).toBeNull();
+  });
+
+  it("nao captura mençao generica de tecnologia em pergunta especifica que a entrada nao responde", () => {
+    expect(matchKnowledge("qual o preco do spark", knowledge)).toBeNull();
+    expect(matchKnowledge("databricks certification", knowledge)).toBeNull();
+    expect(matchKnowledge("polars vs pandas", knowledge)).toBeNull();
+  });
+
+  it("expressao multi-palavras ainda corresponde como token contiguo", () => {
+    const match = matchKnowledge("engenharia de dados", knowledge);
+    expect(match).not.toBeNull();
+    expect(match.entry.id).toBe("rilen-hard-skills");
+  });
+});
+
+describe("worker - Gemini simulado (mocked fetch)", () => {
+  function mockGemini(response) {
+    global.fetch = vi.fn().mockResolvedValue(response);
+  }
+
+  it("sucesso: retorna resposta do Gemini e chama fetch uma vez", async () => {
+    mockGemini({
+      ok: true,
+      json: () =>
+        Promise.resolve({
+          candidates: [{ content: { parts: [{ text: "resposta do gemini" }] } }],
+        }),
+    });
+
+    const res = await post("qual a experiencia do rilen com kubernetes?", {
+      GEMINI_API_KEY: "fake-key",
+    });
+    expect(res.status).toBe(200);
+    const data = await body(res);
+    expect(data.reply).toBe("resposta do gemini");
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("erro do provedor: retorna mensagem amigavel sem expor detalhe interno", async () => {
+    mockGemini({
+      ok: false,
+      json: () => Promise.resolve({ error: { message: "chave invalida" } }),
+    });
+
+    const res = await post("qual a experiencia do rilen com kubernetes?", {
+      GEMINI_API_KEY: "fake-key",
+    });
+    expect(res.status).toBe(200);
+    const data = await body(res);
+    expect(data.reply).toContain("Não consegui acessar a Nelir");
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("resposta invalida (sem candidatos): retorna mensagem amigavel", async () => {
+    mockGemini({ ok: true, json: () => Promise.resolve({}) });
+
+    const res = await post("qual a experiencia do rilen com kubernetes?", {
+      GEMINI_API_KEY: "fake-key",
+    });
+    expect(res.status).toBe(200);
+    const data = await body(res);
+    expect(data.reply).toContain("Não consegui acessar a Nelir");
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("worker - validacao de entrada", () => {
+  it("question numero (123) retorna 400, mensagem estavel e zero chamadas ao Gemini", async () => {
+    const res = await post(123);
+    expect(res.status).toBe(400);
+    const data = await body(res);
+    expect(data.error).toBe("Pergunta invalida ou vazia");
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it("question com 601 caracteres retorna 400, mensagem estavel e zero chamadas ao Gemini", async () => {
+    const res = await post("a".repeat(601));
+    expect(res.status).toBe(400);
+    const data = await body(res);
+    expect(data.error).toBe("Pergunta invalida ou vazia");
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it("question com exatamente 600 caracteres passa na validacao", async () => {
+    const res = await post("a".repeat(600));
+    expect(res.status).not.toBe(400);
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it("question apenas espacos retorna 400 e zero chamadas ao Gemini", async () => {
+    const res = await post("   ");
+    expect(res.status).toBe(400);
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+});
+
+describe("worker - pertinence de palavra inteira", () => {
+  it("melancia nao e pertinente (ia nao captura dentro da palavra)", async () => {
+    const res = await post("melancia");
+    expect(res.status).toBe(200);
+    const data = await body(res);
+    expect(data.reply).toContain("Não tenho informações verificadas");
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it("ia como palavra inteira e pertinente", async () => {
+    const res = await post("ia");
+    expect(res.status).toBe(200);
+    const data = await body(res);
+    expect(data.reply).toContain("Não consigo consultar a IA");
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+});

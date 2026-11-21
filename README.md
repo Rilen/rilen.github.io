@@ -179,6 +179,23 @@ rilen.github.io/
 └── REAL_BOT_SETUP.md       # Guia de configuração do Worker
 ```
 
+## 📚 Base de conhecimento da Nelir — fontes e confirmacao
+
+O Worker `rilen-bot-api` mantem uma base de conhecimento local em `rilen-bot-api/knowledge/nelir.pt-BR.json` para responder com zero chamadas ao Gemini.
+
+### Fontes publicas (reconstrucao das entradas)
+As entradas foram reconstruidas a partir de fontes publicas aprovadas:
+- Portfolio: https://rilen.github.io
+- LinkedIn: https://linkedin.com/in/rilen/
+- Casos tecnicos autorizados do proprio portfolio (imagens e descricoes em `/images`).
+
+### Itens que exigem confirmacao do mantenedor
+Antes de publicar ou alterar a base de conhecimento, confirme com o mantenedor:
+- **Dados pessoais:** e-mail (rilen.lima@gmail.com), WhatsApp (+55 22 99247-0445) e outros contatos diretos.
+- **Alegacoes profissionais:** cargo "Supervisor de Governanca de TIC na Prefeitura de Rio das Ostras (PMRO) desde 2026", "25+ anos de experiencia", certificacoes e formacoes listadas nas respostas do bot.
+
+Nenhum dado pessoal ou alegacao profissional deve ser adicionado ou modificado sem confirmacao expressa do mantenedor. Veja tambem `rilen-bot-api/knowledge/README.md`.
+
 ---
 
 ## 🚀 Deploy Local
