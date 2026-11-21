@@ -4,7 +4,7 @@ const hits = new Map(); // IP -> number[]
 
 function isRateLimited(ip) {
   const now = Date.now();
-  const recent = (hits.get(ip) || []).filter(t => now - t < RATE_LIMIT.windowMs);
+  const recent = (hits.get(ip) || []).filter((t) => now - t < RATE_LIMIT.windowMs);
   if (recent.length >= RATE_LIMIT.max) {
     hits.set(ip, recent);
     return true;
@@ -14,15 +14,87 @@ function isRateLimited(ip) {
   return false;
 }
 
+import { normalize, matchKnowledge } from "./knowledge/matcher.js";
+import knowledge from "./knowledge/nelir.pt-BR.json";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "https://rilen.github.io",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Cache-Control": "no-store",
+  "Content-Type": "application/json; charset=utf-8",
+};
+
+// Termos que indicam que a pergunta e pertinente ao perfil publico do Rilen.
+const PERTINENT_KEYWORDS = [
+  "rilen",
+  "nelir",
+  "perfil",
+  "quem",
+  "o que faz",
+  "atuacao",
+  "atuação",
+  "formacao",
+  "formação",
+  "projeto",
+  "projetos",
+  "contato",
+  "email",
+  "e-mail",
+  "linkedin",
+  "portfolio",
+  "trabalha",
+  "trabalho",
+  "empresa",
+  "prefeitura",
+  "rio das ostras",
+  "dados",
+  "inteligencia",
+  "ia",
+  "ciencia de dados",
+  "cybersecurity",
+  "seguranca",
+  "engenharia de dados",
+  "cloudflare",
+  "databricks",
+  "spark",
+];
+
+function isPertinent(question) {
+  const q = normalize(question);
+  return PERTINENT_KEYWORDS.some((k) => q.includes(k));
+}
+
+function jsonReply(reply, status = 200) {
+  return new Response(JSON.stringify({ reply }), { status, headers: corsHeaders });
+}
+
+const systemInstruction = `Seu nome é Nelir (Rilen ao contrário). Você é o assistente virtual do Rilen Tavares Lima.
+
+PERFIL PÚBLICO APROVADO:
+- Rilen Tavares Lima, Data Intelligence & AI Architect, 25+ anos de experiência.
+- Cultura Open Source e administração GNU/Linux.
+- Supervisor de Governança de TIC na Prefeitura de Rio das Ostras (PMRO) desde 2026.
+- Especialidades: ciência de dados e IA; big data e infraestrutura; cybersecurity e GRC.
+- Formação: Cientista de Dados (Descomplica), MBA em Segurança da Informação, Pós em IA na Prática e Big Data.
+- Certificações: Modelling Data Developer, Disruptive Technologies, Cybersecurity.
+
+TECNOLOGIAS (HARD SKILLS):
+- Engenharia de Dados: Databricks, Apache Spark, Delta Lake, Polars, ETL/ELT.
+- IA & ML: LLMs, RAG, NLP, redes neurais, fine-tuning, Random Forest, Meta Prophet.
+- Desenvolvimento: Next.js 14, FastAPI, TypeScript, React 19, Python, R.
+- Infra & Cibersegurança: Cloudflare Workers, Docker, LocalAI, hardening, GRC, observabilidade (Grafana/Prometheus).
+
+PROJETOS EM DESTAQUE: eCidade Dashboard, OstraIA, SALI-Guardian, ERP DoisCorações, Convertexto, PolyDB Platform, OstraSmart, SparkBrick, Preve-Ostras, Nelir AI Engine.
+
+CONTATO: rilen.lima@gmail.com | Portfolio: rilen.github.io | LinkedIn: in/rilen.
+
+DIRETRIZES:
+- Seja técnico, sênior e direto. Use termos como "Soberania de Dados", "Resiliência Digital" e "Arquitetura Medallion".
+- Responda apenas com informação pública aprovada sobre o Rilen. Se a informação verificável estiver ausente, informe a limitação.`;
+
 export default {
   async fetch(request, env) {
-    const corsHeaders = {
-      "Access-Control-Allow-Origin": "https://rilen.github.io",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-      "Cache-Control": "no-store",
-    };
-
     if (request.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
     if (request.method !== "POST") {
@@ -34,82 +106,80 @@ export default {
 
     const ip = request.headers.get("CF-Connecting-IP") || "unknown";
     if (isRateLimited(ip)) {
-      return new Response(JSON.stringify({ error: "Muitas requisições. Tente novamente em instantes." }), {
-        status: 429,
-        headers: corsHeaders,
-      });
+      return new Response(
+        JSON.stringify({
+          reply: "Muitas requisições. Tente novamente em instantes.",
+        }),
+        { status: 429, headers: corsHeaders }
+      );
     }
 
     try {
       const requestBody = await request.json();
       const question = requestBody?.question?.trim();
-      const apiKey = env.GEMINI_API_KEY;
-
-      if (!apiKey) {
-        throw new Error('Chave GEMINI_API_KEY não configurada');
-      }
 
       if (!question) {
-        throw new Error('Pergunta inválida ou vazia');
+        return new Response(
+          JSON.stringify({ error: "Pergunta inválida ou vazia" }),
+          { status: 400, headers: corsHeaders }
+        );
       }
 
-      const systemInstruction = `Seu nome é Nelir (Rilen ao contrário). Você é o assistente virtual do Rilen Tavares Lima.
-      
-      PERFIL: Data Intelligence & AI Architect. Especialista com 25+ anos de experiência.
-      Foco: Transformar complexidade em insights inteligentes, resilientes e seguros. 
-      Diferencial: PcD (Implante Coclear), foco absoluto via 'Deep Work Nativo'.
-
-      EXPERTISE TÉCNICA (HARD SKILLS):
-      - Engenharia de Dados: Databricks (Medallion Architecture), Apache Spark, Delta Lake, Polars, ETL/ELT.
-      - IA & ML: LLMs, RAG (Retrieval-Augmented Generation), NLP, Redes Neurais, Fine-tuning, Random Forest, Meta Prophet.
-      - Desenvolvimento: Next.js 14, FastAPI, TypeScript, React 19, Python, R.
-      - Infra & CyberSec: Cloudflare Workers, Docker, LocalAI (LLMs 14B em CPU AVX-512), Hardening, GRC, Observabilidade (Grafana/Prometheus).
-
-      PROJETOS EM DESTAQUE:
-      1. eCidade Dashboard: BI Educacional na PMRO usando Random Forest para prever evasão escolar e Chat IA via Groq.
-      2. OstraIA: Plataforma de IA municipal 100% local (Ollama + FlowiseAI + LocalAI) com foco em Soberania de Dados e LGPD.
-      3. SALI-Guardian: Plataforma de auditoria inteligente para governança de dados municipais.
-      4. ERP DoisCorações: Sistema crítico Full-Stack com auditoria forense SHA-256 e RBAC estrito.
-      5. Convertexto: Ferramenta de IA para transcrição automatizada de reuniões longas com cortes precisos.
-      6. PolyDB Platform: Gateway unificado de dados (Headless CMS via Directus) com observabilidade avançada.
-      7. OstraSmart: Inteligência governamental previdenciária usando Polars para ETL rápido e Meta Prophet para forecasting.
-      8. SparkBrick: Ingestão de Criptoativos usando arquitetura Medallion e Unity Catalog no Databricks.
-      9. Preve-Ostras: Monitoramento territorial para prevenção de enchentes com D3.js e dados meteorológicos.
-      10. Nelir AI Engine: Este sistema de orquestração rodando em Edge Computing (Cloudflare).
-
-      COMUNICAÇÃO:
-      - Seja técnico, sênior e direto. Use termos como 'Soberania de Dados', 'Resiliência Digital' e 'Arquitetura Medallion'.
-      - Para contato: rilen.lima@gmail.com | Portfolio: rilen.github.io | LinkedIn: in/rilen.`;
-
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: systemInstruction }] },
-          contents: [
-            { role: "user", parts: [{ text: question }] }
-          ]
-        })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data?.error?.message || `Erro Gemini ${response.status}`);
+      // 1. Tentar correspondência na base de conhecimento local (zero chamadas ao Gemini).
+      const match = matchKnowledge(question, knowledge);
+      if (match) {
+        return jsonReply(match.entry.reply);
       }
 
-      const botReply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!botReply) {
-        throw new Error('Resposta inesperada do Gemini');
+      // 2. Fora da base local. Somente perguntas pertinentes ao Rilen consultam o Gemini.
+      if (!isPertinent(question)) {
+        return jsonReply(
+          "Não tenho informações verificadas sobre esse assunto na minha base de conhecimento. Posso falar sobre o perfil, projetos, tecnologias e contato do Rilen Tavares Lima."
+        );
       }
 
-      return new Response(JSON.stringify({ reply: botReply }), { headers: corsHeaders });
+      const apiKey = env?.GEMINI_API_KEY;
+      if (!apiKey) {
+        return jsonReply(
+          "Não consigo consultar a IA neste momento porque as credenciais não estão configuradas. Pergunte sobre o perfil, projetos ou contato do Rilen, que estão na minha base local."
+        );
+      }
 
+      // 3. Consultar Gemini com contexto público aprovado sobre o Rilen.
+      try {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              systemInstruction: { parts: [{ text: systemInstruction }] },
+              contents: [{ role: "user", parts: [{ text: question }] }],
+            }),
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data?.error?.message || `Erro Gemini ${response.status}`);
+        }
+
+        const botReply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!botReply) {
+          throw new Error("Resposta inesperada do Gemini");
+        }
+
+        return jsonReply(botReply);
+      } catch (geminiErr) {
+        return jsonReply(
+          "Não consegui acessar a Nelir neste momento. Tente novamente em instantes ou entre em contato pelo LinkedIn."
+        );
+      }
     } catch (err) {
-      return new Response(JSON.stringify({ error: err.message || "Erro na conexão com IA" }), {
-        status: 500,
-        headers: corsHeaders
-      });
+      return jsonReply(
+        err.message || "Não consegui processar a sua pergunta. Tente novamente."
+      );
     }
-  }
+  },
 };

@@ -1,0 +1,110 @@
+{
+  "schema": "nelir-knowledge-v1",
+  "locale": "pt-BR",
+  "source": "conteudo publico aprovado do portfolio de Rilen Tavares Lima (rilen.github.io)",
+  "entries": [
+    {
+      "id": "nelir-quem-e",
+      "category": "identidade",
+      "patterns": [
+        "quem e voce",
+        "quem e nelir",
+        "o que e nelir",
+        "quem e rilen",
+        "quem eh rilen",
+        "quem eh nelir"
+      ],
+      "reply": "Sou a Nelir (Rilen ao contrario), a assistente virtual do Rilen Tavares Lima, Data Intelligence & AI Architect com mais de 25 anos de experiencia em tecnologia. Meu foco eh transformar complexidade em insights inteligentes, resilientes e seguros."
+    },
+    {
+      "id": "rilen-perfil",
+      "category": "perfil",
+      "patterns": [
+        "qual o perfil do rilen",
+        "perfil do rilen",
+        "o que o rilen faz",
+        "atuacao do rilen",
+        "formacao do rilen"
+      ],
+      "reply": "Rilen Tavares Lima eh Data Intelligence & AI Architect, com 25+ anos de experiencia na cultura Open Source e administracao GNU/Linux. Atua como Supervisor de Governanca de TIC na Prefeitura de Rio das Ostras (PMRO) desde 2026. Especialidades: ciencia de dados e IA, big data e infraestrutura, e cybersecurity/GRC. Formacao: Cientista de Dados (Descomplica), MBA em Seguranca da Informacao e Pos-graduacao em IA na Pratica e Big Data."
+    },
+    {
+      "id": "rilen-hard-skills",
+      "category": "tecnologias",
+      "patterns": [
+        "quais sao as tecnologias do rilen",
+        "stack do rilen",
+        "hard skills do rilen",
+        "tecnologias que o rilen domina",
+        "engenharia de dados",
+        "databricks",
+        "spark",
+        "delta lake",
+        "polars",
+        "cloudflare workers",
+        "localai",
+        "grafana",
+        "prometheus"
+      ],
+      "reply": "Hard skills do Rilen: Engenharia de Dados (Databricks, Apache Spark, Delta Lake, Polars, ETL/ELT), IA e ML (LLMs, RAG, NLP, redes neurais, fine-tuning, Random Forest, Meta Prophet), Desenvolvimento (Next.js 14, FastAPI, TypeScript, React 19, Python, R) e Infra/Ciberseguranca (Cloudflare Workers, Docker, LocalAI com LLMs em CPU AVX-512, hardening, GRC, observabilidade com Grafana e Prometheus)."
+    },
+    {
+      "id": "rilen-projetos",
+      "category": "projetos",
+      "patterns": [
+        "quais sao os projetos do rilen",
+        "projetos em destaque",
+        "projetos do rilen tavares",
+        "ecidade",
+        "ostraia",
+        "sali-guardian",
+        "doiscoracoes",
+        "convertexto",
+        "polydb",
+        "ostrasmart",
+        "sparkbrick",
+        "preve-ostras",
+        "nelir ai engine"
+      ],
+      "reply": "Projetos em destaque do Rilen: eCidade Dashboard (BI educacional na PMRO com previsao de evasao escolar), OstraIA (plataforma de IA municipal 100% local, Ollama/FlowiseAI/LocalAI, foco em soberania de dados e LGPD), SALI-Guardian (auditoria inteligente de governanca de dados municipais), ERP DoisCorações (full-stack com auditoria forense SHA-256 e RBAC), Convertexto (transcricao de reunioes), PolyDB Platform (gateway unificado de dados com Directus), OstraSmart (inteligencia governamental previdenciaria com Polars e Meta Prophet), SparkBrick (ingestao de criptoativos, arquitetura Medallion no Databricks), Preve-Ostras (monitoramento territorial contra enchentes com D3.js) e Nelir AI Engine (orquestracao em Edge Computing/Cloudflare Workers)."
+    },
+    {
+      "id": "rilen-contato",
+      "category": "contato",
+      "patterns": [
+        "como entrar em contato com o rilen",
+        "contato do rilen",
+        "email do rilen",
+        "e-mail do rilen",
+        "linkedin do rilen",
+        "portfolio do rilen",
+        "contratar o rilen"
+      ],
+      "reply": "Para contato: rilen.lima@gmail.com | Portfolio: rilen.github.io | LinkedIn: linkedin.com/in/rilen. Para contratacao ou projetos, direcione para o e-mail ou o LinkedIn no rodapé do portfolio."
+    },
+    {
+      "id": "rilen-diferencial",
+      "category": "diferencial",
+      "patterns": [
+        "diferencial do rilen",
+        "pcD",
+        "pc d",
+        "implante coclear",
+        "deep work",
+        "foco absoluto"
+      ],
+      "reply": "Diferencial do Rilen: PcD (usuario de implante coclear), com foco absoluto no codigo via 'Deep Work Nativo'. Comunicacao tecnico, sênior e direto, usando termos como 'Soberania de Dados', 'Resiliencia Digital' e 'Arquitetura Medallion'."
+    },
+    {
+      "id": "rilen-valor",
+      "category": "valores",
+      "patterns": [
+        "valores do rilen",
+        "resiliencia digital",
+        "soberania de dados",
+        "arquitetura medallion"
+      ],
+      "reply": "Rilen preza por Resiliencia Digital, Soberania de Dados e Arquitetura Medallion, entregando solucoes inteligentes, resilientes e seguras, com foco absoluto em Deep Work."
+    }
+  ]
+}
